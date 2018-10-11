@@ -2,12 +2,16 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import json
 import socket
+import schedule
+import time
+import glob
 
 
 def index(request):
     """ If the request is get it will return a login form , other wise it send a tcp login request to server. """
     if request.method == "GET":
         return render(request, 'Login/index.html')
+
     elif request.method == "POST":
         try:
             loginStatus = request.POST['option']
@@ -21,9 +25,8 @@ def index(request):
             httpresponse = HttpResponse(responseValue)
             settingCookie(request, httpresponse)
             return redirect("main:index")
-
         else:
-            return render(request, 'Login/index.html')
+            return redirect(request, 'Login/index.html')
 
 
 def authentication(request, ip_address, port_number, bufferSize, messageType):
@@ -51,5 +54,4 @@ def authentication(request, ip_address, port_number, bufferSize, messageType):
 def settingCookie(request, response):
     """ Setting the cookie to store the email of the login id and then use it to fetch all comapnies."""
     response.set_cookie("user_email", request.POST['username'])
-    # request.COOKIES.get('logged_in_status') # fetcjhing cookie.
     return response

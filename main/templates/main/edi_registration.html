@@ -253,7 +253,7 @@
 						Username
 					</span>
 					<div class="wrap-input100 validate-input m-b-36" data-validate = "Username is required">
-						<input class="input100" type="text" name="username" >
+						<input class="input100" type="text" name="username">
 						<span class="focus-input100"></span>
 					</div>
 
@@ -280,15 +280,15 @@
 					<span class="txt1 p-b-11">
 						Output Path
 					</span>
-					<div class="wrap-input100 validate-input m-b-36" data-validate = "Output path is required">
-						<input class="input100" type="text" name="outputpath" >
+                    <div class="wrap-input100 validate-input m-b-36" data-validate = "Output Path is required">
+						<input class="input100" type="text" name="outputpathdir" >
 						<span class="focus-input100"></span>
 					</div>
 
 
 					<div class="flex-sb-m w-full p-b-48">
 						<div class="contact100-form-checkbox">
-							<input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+							<input class="input-checkbox100" id="ckb1" type="checkbox" name="checking">
 							<label class="label-checkbox100" for="ckb1">
 							 Ouput directory have a different IP host?
 							</label>
@@ -394,6 +394,49 @@
         });
 
 
+        $("#submitForm").click(function(){
+            email =   "{{  cookie_email }}";
+            inputPath = $("input[name=inputpath]").val()
+            outputPath= $("input[name=outputpathdir]").val()
+            alert(email);
+             if($("input[name=checking]").prop('checked') == true){
+                  var ip_hostIn = $("input[name=iphost]").val();
+                  var user_nameIn = $("input[name=username]").val();
+                  var passwordIn =$("input[name=pass]").val();
+                  var ip_hostOut = $("input[name=iphostout]").val();
+                  var user_nameOut = $("input[name=usernameout]").val();
+                  var passwordOut =$("input[name=passout]").val()
+            }
+            else {
+                var ip_hostIn = $("input[name=iphost]").val();
+                var user_nameIn = $("input[name=username]").val();
+                var passwordIn =$("input[name=pass]").val();
+                var ip_hostOut = $("input[name=iphost]").val();
+                var user_nameOut = $("input[name=username]").val();
+                var passwordOut =$("input[name=pass]").val();
+            }
+
+            $.ajax({
+                url :  "{% url 'main:account'%}",
+                type: "post",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}' ,
+                    "email":email,
+                    "iphost": ip_hostIn ,
+                    "username": user_nameIn,
+                    "password": passwordIn,
+                    "inputpath":inputPath,
+                    "outputpath":outputPath,
+                    "iphostOut":ip_hostOut,
+                    "usernameOut":user_nameOut,
+                    "passwordOut":passwordOut
+
+                },
+                success: function(response) {
+                    alert(response)
+                }
+            })
+        });
     });
 	</script>
         </div> <!-- .content -->
