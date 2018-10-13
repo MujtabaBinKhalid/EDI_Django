@@ -7,6 +7,8 @@ urlpatterns = [
     path('login/', include("Login.urls")),
     path('index/', include("main.urls")),
 ]
+
+
 try:
     tcpRequest(repeat=300, repeat_until=None)
 except KeyboardInterrupt:

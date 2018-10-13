@@ -146,5 +146,5 @@ def outputFile(filename, account):
     SE*4*000000003
     GE*1*000000003
     IEA*1*000000003""")
-    # ftp_out.storbinary('STOR ' + filename+".edi", output)
+    ftp_out.storbinary('STOR ' + filename+".edi", output)
     print("output stored !")
