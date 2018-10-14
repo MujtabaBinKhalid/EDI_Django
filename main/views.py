@@ -15,7 +15,7 @@ def accountCreation(request):
     if request.is_ajax() or request.method == 'POST':
         # return HttpResponse(request.COOKIES.get('user_email'))
         edi_account = EDIAccount.objects.create(ipHost=request.POST['iphost'], userName=request.POST['username'],
-                                                password=request.POST['password'], email="request.COOKIES.get('user_email')", input_path=request.POST['inputpath'],
+                                                password=request.POST['password'], email="hello", input_path=request.POST['inputpath'],
                                                 output_path=request.POST['outputpath'], ip_hostOut=request.POST['iphostOut'],
                                                 passwordOut=request.POST['passwordOut'],  user_nameOut=request.POST['usernameOut'])
         edi_account.save()
