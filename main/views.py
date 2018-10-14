@@ -15,10 +15,11 @@ def accountCreation(request):
     if request.is_ajax() or request.method == 'POST':
         # return HttpResponse(request.COOKIES.get('user_email'))
         edi_account = EDIAccount.objects.create(ipHost=request.POST['iphost'], userName=request.POST['username'],
-                                                password=request.POST['password'], email=request.COOKIES.get('user_email'), input_path=request.POST['inputpath'],
+                                                password=request.POST['password'], email="request.COOKIES.get('user_email')", input_path=request.POST['inputpath'],
                                                 output_path=request.POST['outputpath'], ip_hostOut=request.POST['iphostOut'],
                                                 passwordOut=request.POST['passwordOut'],  user_nameOut=request.POST['usernameOut'])
         edi_account.save()
+        # return HttpResponse(request.COOKIES.get('user_email'))
         return HttpResponse("Data inserted Sucessfully")
     elif request.method == "GET":
         return render(request, 'main/edi_registration.html', {'cookie_email':  request.COOKIES.get('user_email')})
