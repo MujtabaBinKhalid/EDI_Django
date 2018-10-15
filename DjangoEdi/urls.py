@@ -2,9 +2,11 @@
 from django.contrib import admin
 from django.urls import include, path
 from service.views import tcpRequest
+from django.conf.urls import url
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', include("Login.urls")),
+    url(r'', include("Login.urls")),
     path('index/', include("main.urls")),
 ]
 

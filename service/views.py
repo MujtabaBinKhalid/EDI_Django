@@ -3,14 +3,14 @@ import socket
 import io
 import ftplib
 from django.shortcuts import render
-from main.models import EDIAccount
+from main.models import accountRegistration
 from background_task import background
 from io import BytesIO
 
 
 @background(schedule=300)
 def tcpRequest():
-    accounts = EDIAccount.objects.all()
+    accounts = accountRegistration.objects.all()
     for account in accounts:
         # print("translating files of account " + account.ipHost)
         global host, ftp

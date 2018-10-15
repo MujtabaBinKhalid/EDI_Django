@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import EDIAccount
+from .models import accountRegistration
 
 
-admin.site.register(EDIAccount)
+admin.site.register(accountRegistration)
 # Register your models here.

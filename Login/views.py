@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.conf import settings
 import json
 import socket
 import schedule
 import time
 import glob
+import datetime
 
 
 def index(request):
@@ -23,7 +25,8 @@ def index(request):
 
         if(responseValue == "Success"):
             httpresponse = HttpResponse(responseValue)
-            settingCookie(request, httpresponse)
+            settingCookie(request.POST['username'], httpresponse)
+            #set_cookie(httpresponse, "email_user", request.POST['username'])
             return redirect("main:index")
         else:
             return redirect(request, 'Login/index.html')
@@ -53,5 +56,15 @@ def authentication(request, ip_address, port_number, bufferSize, messageType):
 
 def settingCookie(request, response):
     """ Setting the cookie to store the email of the login id and then use it to fetch all comapnies."""
-    response.set_cookie("user_email", request.POST['username'])
-    return response
+    response.set_cookie("user_email", request)
+
+
+def set_cookie(response, key, value, days_expire=7):
+    if days_expire is None:
+        max_age = 365 * 24 * 60 * 60  # one year
+    else:
+        max_age = days_expire * 24 * 60 * 60
+    expires = datetime.datetime.strftime(datetime.datetime.utcnow(
+    ) + datetime.timedelta(seconds=max_age), "%a, %d-%b-%Y %H:%M:%S GMT")
+    response.set_cookie(key, value, max_age=max_age, expires=expires,
+                        domain=settings.SESSION_COOKIE_DOMAIN, secure=settings.SESSION_COOKIE_SECURE or None)
