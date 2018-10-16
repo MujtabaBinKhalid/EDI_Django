@@ -125,7 +125,7 @@
 
     <!-- Right Panel -->
     <div id="right-panel" class="right-panel">
-
+<div id="snackbar"></div>
         <!-- Header-->
         <header id="header" class="header">
             <div class="top-left">
@@ -223,7 +223,7 @@
 
                             <a class="nav-link" href="#"><i class="fa fa-cog"></i>Settings</a>
 
-                            <a class="nav-link" href="#"><i class="fa fa-power-off"></i>Logout</a>
+                            <a class="nav-link" href="{% url 'main:logout'  %}"><i class="fa fa-power-off"></i>Logout</a>
                         </div>
                     </div>
                 </div>
@@ -245,7 +245,7 @@
 						Host-IP Address
 					</span>
 					<div class="wrap-input100 validate-input m-b-36" data-validate = "IP host is required">
-						<input class="input100" type="text" name="iphost" >
+						<input class="input100" type="text" name="iphost" id = "Iphost">
 						<span class="focus-input100"></span>
 					</div>
 
@@ -253,7 +253,7 @@
 						Username
 					</span>
 					<div class="wrap-input100 validate-input m-b-36" data-validate = "Username is required">
-						<input class="input100" type="text" name="username">
+						<input class="input100" type="text" name="username" id = "userName">
 						<span class="focus-input100"></span>
 					</div>
 
@@ -265,7 +265,7 @@
 						<span class="btn-show-pass">
 							<i class="fa fa-eye"></i>
 						</span>
-						<input class="input100" type="password" name="pass" >
+						<input class="input100" type="password" name="pass" id = "password">
 						<span class="focus-input100"></span>
 					</div>
 
@@ -273,7 +273,7 @@
 						Input Path
 					</span>
 					<div class="wrap-input100 validate-input m-b-36" data-validate = "Input Path is required">
-						<input class="input100" type="text" name="inputpath" >
+						<input class="input100" type="text" name="inputpath" id = "inputPath" >
 						<span class="focus-input100"></span>
 					</div>
 
@@ -281,7 +281,7 @@
 						Output Path
 					</span>
                     <div class="wrap-input100 validate-input m-b-36" data-validate = "Output Path is required">
-						<input class="input100" type="text" name="outputpathdir" >
+						<input class="input100" type="text" name="outputpathdir" id = "outputPath">
 						<span class="focus-input100"></span>
 					</div>
 
@@ -358,6 +358,27 @@
 <!--===============================================================================================-->
 
 	<script type="text/javascript">
+
+    function displayingSnackBar($message){
+      var snackbar = document.getElementById("snackbar");
+      snackbar.innerHTML = "";
+      snackbar.innerHTML += $message;
+      snackbar.className = "show";
+      setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 2000);
+    }
+
+    function validatingTextFields(textfieldArray){
+        var buttonstatus = false;
+        for (i = 0; i < textfieldArray.length; i++) {
+            if(document.getElementById(textfieldArray[i]).value ==="")
+            buttonstatus = false;
+            else
+            buttonstatus = true;
+}
+            return buttonstatus;
+
+
+    }
 	function makingTextFieldEmpty(textfieldArray){
 		for (i = 0; i < textfieldArray.length; i++) {
 			document.getElementById(textfieldArray[i]).value = "";
@@ -377,15 +398,18 @@
 
 	}
     $(document).ready(function(){
+        var checkboxStatus = "false";
 		changingTextFieldStatus(["#IPhostOut", "#userNameout", "#passwordOut"], true);
 		changingColor(["IPhostOut", "userNameout", "passwordOut"], "#cccccc");
 
         $('input[type="checkbox"]').click(function(){
             if($(this).prop("checked") == true){
+                checkboxStatus = "true";
 				changingTextFieldStatus(["#IPhostOut", "#userNameout", "#passwordOut"], false);
 				changingColor(["IPhostOut", "userNameout", "passwordOut"], "#fff");
 			}
             else if($(this).prop("checked") == false){
+                checkboxStatus = "false";
 				changingTextFieldStatus(["#IPhostOut", "#userNameout", "#passwordOut"], true);
 			    changingColor(["IPhostOut", "userNameout", "passwordOut"], "#cccccc");
 			    makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut"]);
@@ -395,51 +419,63 @@
 
 
         $("#submitForm").click(function(){
-            email =   "{{  cookie_email }}";
-            inputPath = $("input[name=inputpath]").val()
-            outputPath= $("input[name=outputpathdir]").val()
-             if($("input[name=checking]").prop('checked') == true){
-                  var ip_hostIn = $("input[name=iphost]").val();
-                  var user_nameIn = $("input[name=username]").val();
-                  var passwordIn =$("input[name=pass]").val();
-                  var ip_hostOut = $("input[name=iphostout]").val();
-                  var user_nameOut = $("input[name=usernameout]").val();
-                  var passwordOut =$("input[name=passout]").val()
-            }
-            else {
-                var ip_hostIn = $("input[name=iphost]").val();
-                var user_nameIn = $("input[name=username]").val();
-                var passwordIn =$("input[name=pass]").val();
-                var ip_hostOut = $("input[name=iphost]").val();
-                var user_nameOut = $("input[name=username]").val();
-                var passwordOut =$("input[name=pass]").val();
-            }
+                // mean all textfields are not enabled . (ip and out ips are same)
+                if (checkboxStatus === "false"){
+                    buttonStatus =  validatingTextFields(["password", "userName", "inputPath", "outputPath", "Iphost"])
+                }
+                else {
+                buttonStatus =  validatingTextFields(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
+                }
+                if (buttonStatus){
+                         email =   "{{  cookie_email }}";
+                         inputPath = $("input[name=inputpath]").val()
+                         outputPath= $("input[name=outputpathdir]").val()
+                          if($("input[name=checking]").prop('checked') == true){
+                               var ip_hostIn = $("input[name=iphost]").val();
+                               var user_nameIn = $("input[name=username]").val();
+                               var passwordIn =$("input[name=pass]").val();
+                               var ip_hostOut = $("input[name=iphostout]").val();
+                               var user_nameOut = $("input[name=usernameout]").val();
+                               var passwordOut =$("input[name=passout]").val()
+                         }
+                         else {
+                             var ip_hostIn = $("input[name=iphost]").val();
+                             var user_nameIn = $("input[name=username]").val();
+                             var passwordIn =$("input[name=pass]").val();
+                             var ip_hostOut = $("input[name=iphost]").val();
+                             var user_nameOut = $("input[name=username]").val();
+                             var passwordOut =$("input[name=pass]").val();
+                         }
 
-            $.ajax({
-                url :  "{% url 'main:account'%}",
-                type: "post",
-                data: {
-                    csrfmiddlewaretoken: '{{ csrf_token }}' ,
-                    "email":email,
-                    "iphost": ip_hostIn ,
-                    "username": user_nameIn,
-                    "password": passwordIn,
-                    "inputpath":inputPath,
-                    "outputpath":outputPath,
-                    "iphostOut":ip_hostOut,
-                    "usernameOut":user_nameOut,
-                    "passwordOut":passwordOut
+                         $.ajax({
+                             url :  "{% url 'main:account'%}",
+                             type: "post",
+                             data: {
+                                 csrfmiddlewaretoken: '{{ csrf_token }}' ,
+                                 "email":email,
+                                 "iphost": ip_hostIn ,
+                                 "username": user_nameIn,
+                                 "password": passwordIn,
+                                 "inputpath":inputPath,
+                                 "outputpath":outputPath,
+                                 "iphostOut":ip_hostOut,
+                                 "usernameOut":user_nameOut,
+                                 "passwordOut":passwordOut
 
-                },
-                success: function(response) {
-                    alert(response)
-                },
-                error: function(jqXHR, textStatus, errorThrown){
-                    console.log(jqXHR.responseText);
-                   console.log(errorThrown);
-       }
+                             },
+                             success: function(response) {
+                                 makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
+                                 displayingSnackBar("Account created !")
+                             },
+                             error: function(jqXHR, textStatus, errorThrown){
+                                displayingSnackBar("Some thing went wrong , try again.")
+                    }
 
-            })
+                         })
+                }
+                else {
+                    displayingSnackBar ("Fill out your form properly , in order to create an account")
+                }
         });
     });
 	</script>

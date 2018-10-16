@@ -12,7 +12,12 @@ import datetime
 def index(request):
     """ If the request is get it will return a login form , other wise it send a tcp login request to server. """
     if request.method == "GET":
-        return render(request, 'Login/index.html')
+        try:
+            sessionData = request.session['name']
+            return render(request, 'main/index.html')
+
+        except Exception as e:
+            return render(request, 'Login/index.html')
 
     elif request.method == "POST":
         try:
@@ -24,12 +29,13 @@ def index(request):
             responseValue = authentication(request, "35.161.234.96", 9991, 1024, "login_user")
 
         if(responseValue == "Success"):
+            request.session['name'] = request.POST['username']
             httpresponse = HttpResponse(responseValue)
             settingCookie(request.POST['username'], httpresponse)
-            #set_cookie(httpresponse, "email_user", request.POST['username'])
+            # set_cookie(httpresponse, "email_user", request.POST['username'])
             return redirect("main:index")
         else:
-            return redirect(request, 'Login/index.html')
+            return render(request, 'Login/index.html', {"error": "login credentials are not valid"})
 
 
 def authentication(request, ip_address, port_number, bufferSize, messageType):

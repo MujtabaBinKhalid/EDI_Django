@@ -27,9 +27,54 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'Login/css/util.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'Login/css/main.css' %}">
 <!--===============================================================================================-->
+
+<style>
+#snackbar {
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    font-size: 17px;
+}
+
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+</style>
 </head>
 <body>
-
+		{% if error %}
+		<div id="snackbar">"Wrong credentials, try again !"</div>
+		{% endif %}
 		<div class="limiter">
 			<div class="container-login100">
 				<div class="wrap-login100 p-l-85 p-r-85 p-t-55 p-b-55">
@@ -44,7 +89,7 @@
 							Username
 						</span>
 						<div class="wrap-input100 validate-input m-b-36" data-validate = "Username is required">
-							<input class="input100" type="text" name="username" >
+							<input class="input100" type="text" name="username" id = "name" required>
 							<span class="focus-input100"></span>
 						</div>
 
@@ -55,7 +100,7 @@
 							<span class="btn-show-pass">
 								<i class="fa fa-eye"></i>
 							</span>
-							<input class="input100" type="password" name="pass" >
+							<input class="input100" type="password" name="pass" id = "pass" required>
 							<span class="focus-input100"></span>
 						</div>
 
