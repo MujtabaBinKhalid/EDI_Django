@@ -31,13 +31,13 @@ def fetchingCompaniesAndLoads(ip_address, port_number, bufferSize, messageType, 
     return dictionary["details"]
 
 
-def activeConnections(out_queue):
+def activeConnections(request, session_name):
 
     active_connections = accountRegistration.objects.count()
-    out_queue.put(active_connections)
+    request.session[session_name] = active_connections
 
 
-def ConnectedConnections(out_queue,  accounts):
+def ConnectedConnections(request, session_name,  accounts):
 
     connected_connections = 0
     for account in accounts:
@@ -47,10 +47,10 @@ def ConnectedConnections(out_queue,  accounts):
                 connected_connections += 1
         except Exception as e:
             pass
-    out_queue.put(connected_connections)
+    request.session[session_name] = connected_connections
 
 
-def decryptedFiles(out_queue,  accounts):
+def decryptedFiles(request, session_name,  accounts):
 
     decrypted_files = []
     decrypted_files_number = 0
@@ -59,10 +59,10 @@ def decryptedFiles(out_queue,  accounts):
         folderpath = account.output_path
         decrypted_files = ftp.nlst(folderpath)
         decrypted_files_number = decrypted_files_number + len(decrypted_files)
-    out_queue.put(decrypted_files_number)
+    request.session[session_name] = decrypted_files_number
 
 
-def sucessfulFiles(out_queue,  accounts):
+def sucessfulFiles(request, session_name,  accounts):
 
     sucessful_files = []
     sucessful_files_number = 0
@@ -72,17 +72,17 @@ def sucessfulFiles(out_queue,  accounts):
         folderpath = account.input_path + "/sucessful"
         sucessful_files = ftp.nlst(folderpath)
         sucessful_files_number = sucessful_files_number + len(sucessful_files)
-    out_queue.put(sucessful_files_number)
+    request.session[session_name] = sucessful_files_number
 
 
-def company_FtpAccounts(out_queue, accountDetail):
+def company_FtpAccounts(request, session_name, accountDetail):
     try:
         if(accountDetail.ipHost == accountDetail.ip_hostOut):
-            out_queue.put(1)
+            request.session[session_name] = "1"
         elif(accountDetail.ipHost != accountDetail.ip_hostOut):
-            out_queue.put(2)
+            request.session[session_name] = "2"
     except Exception as e:
-        out_queue.put("0")
+        request.session[session_name] = "0"
 
 
 def company_files(out_queue, accountDetail, folder):
@@ -98,9 +98,9 @@ def company_files(out_queue, accountDetail, folder):
             folderpath = accountDetail.input_path + "/notSucessful"
 
         files = ftp.nlst(folderpath)
-        out_queue.put(len(files))
+        request.session[folder] = len(files)
     except Exception as e:
-        out_queue.put("0")
+        request.session[folder] = "0"
 
 
 def index(request):
@@ -109,16 +109,13 @@ def index(request):
     if request.method == "GET":
         # try:
         if (request.session['userStatus'] == "login_company"):
-            Companyinput_queue = queue.Queue()
-            Companyinput_queue.queue.clear()
-            response = fetchingCompanyTilesData(request, Companyinput_queue)
+            response = fetchingCompanyTilesData(request)
             if (response == "noerror"):
                 comapny_tiles_data = {
-                    "ftp_accounts": Companyinput_queue. get(),
-                    "decrypted_files": Companyinput_queue. get(),
-                    "sucessful_files": Companyinput_queue. get(),
-                    "unSucessful_files": Companyinput_queue. get(),
-
+                    "ftp_accounts": request.session["ftpAccounts"],
+                    "decrypted_files": request.session["output"],
+                    "sucessful_files": request.session["sucessful"],
+                    "unSucessful_files": request.session["notSucessful"],
                 }
             elif(response == "error"):
                 comapny_tiles_data = {
@@ -126,21 +123,18 @@ def index(request):
                     "decrypted_files": "0",
                     "sucessful_files": "0",
                     "unSucessful_files": "0",
-
                 }
 
-            Companyinput_queue.queue.clear()
             return render(request, 'main/edi_indexCompany.html', {'tiles_data':  comapny_tiles_data})
         elif(request.session['userStatus'] == "login_user"):
-            input_queue = queue.Queue()
-            input_queue.queue.clear()
-            response = fetchingUserTilesData(input_queue)
+
+            response = fetchingUserTilesData(request)
             if (response == "noerror"):
                 tiles_data = {
-                    "alive_connections": input_queue. get(),
-                    "connected_connections": input_queue. get(),
-                    "decrypted_files": input_queue. get(),
-                    "sucessful_files": input_queue. get(),
+                    "alive_connections": request.session["activeConnection"],
+                    "connected_connections": request.session["connectedConnection"],
+                    "decrypted_files": request.session["decryptedFiles"],
+                    "sucessful_files": request.session["sucessfulFiles"],
                     "accounts_detail": accountRegistration.objects.all(),
                     "accounts_count": accountRegistration.objects.count()
                 }
@@ -154,7 +148,6 @@ def index(request):
                     "accounts_count": accountRegistration.objects.count()
                 }
 
-            input_queue.queue.clear()
             return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data})
         # except Exception as e:
         #     return render(request, 'Login/index.html')
@@ -287,18 +280,18 @@ def is_connected(ftp_conn):
     return True
 
 
-def fetchingUserTilesData(input_queue):
+def fetchingUserTilesData(request):
     try:
         accounts = accountRegistration.objects.all()
         thread_activeConnection = threading.Thread(
-            target=activeConnections, args=(input_queue, ))
+            target=activeConnections, args=(request, "activeConnection"))
         thread_connectedConnection = threading.Thread(
-            target=ConnectedConnections, args=(input_queue, accounts))
+            target=ConnectedConnections, args=(request, "connectedConnection", accounts))
 
         thread_decryptedfiles = threading.Thread(
-            target=decryptedFiles, args=(input_queue, accounts,))
+            target=decryptedFiles, args=(request, "decryptedFiles", accounts,))
         thread_sucessfulfiles = threading.Thread(
-            target=sucessfulFiles, args=(input_queue, accounts,))
+            target=sucessfulFiles, args=(request, "sucessfulFiles", accounts,))
 
         thread_activeConnection.start()
         thread_connectedConnection.start()
@@ -314,11 +307,11 @@ def fetchingUserTilesData(input_queue):
         return "error"
 
 
-def fetchingCompanyTilesData(request, input_queue):
+def fetchingCompanyTilesData(request):
     try:
         accountDetail = accountRegistration.objects.get(email=request.session['name'])
         thread_ftp_accounts = threading.Thread(
-            target=company_FtpAccounts, args=(input_queue, accountDetail))
+            target=company_FtpAccounts, args=(request, "ftpAccounts", accountDetail))
         #
         thread_decrypted_files = threading.Thread(
             target=company_files, args=(input_queue, accountDetail, "output"))
