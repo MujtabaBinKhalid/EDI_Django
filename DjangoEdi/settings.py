@@ -1,3 +1,5 @@
+
+
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -8,13 +10,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'izqc_&dp5hv+km@#$fdecul4#*8-6*m@-64prx%(fr=e8k4si5'
+SECRET_KEY = '%ak4hl@rc5-4d#f8+f=@*mc090ogw4feg3f8k-ukh@#hd0^nsn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['54.245.173.223', '127.0.0.1']
-# ALLOWED_HOSTS = ['54.245.173.223']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -22,14 +23,15 @@ ALLOWED_HOSTS = ['54.245.173.223', '127.0.0.1']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.sessions',
     'django.contrib.contenttypes',
+    'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Login',
     'main',
+    'service',
     'background_task',
-    'service'
+    'statusReport'
 ]
 
 MIDDLEWARE = [
@@ -111,9 +113,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-
-#STATIC_ROOT = "C:/"

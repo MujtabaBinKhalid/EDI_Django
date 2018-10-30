@@ -1,0 +1,194 @@
+{% load  staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>ColdWhere</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <!-- Bootstrap CSS-->
+  <link rel="stylesheet" href="{% static  'main/assets/vendor/bootstrap/css/bootstrap.min.css'  %}">
+
+  <link rel="stylesheet" href="{% static  'main/assets/vendor/font-awesome/css/font-awesome.min.css'  %}">
+  <!-- Custom Font Icons CSS-->
+  <link rel="stylesheet" href="{% static  'main/assets/css/font.css'  %}">
+
+  <!-- Google fonts - Muli-->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:300,400,700">
+  <!-- theme stylesheet-->
+  <link rel="stylesheet" href="{% static  'main/assets/css/style.default.css'  %}" >
+  <!-- Custom stylesheet - for your changes-->
+  <link rel="stylesheet" href="{% static  'main/assets/css/custom.css'  %}">
+  <!-- Favicon-->
+  <link rel="shortcut icon" href="{% static  'main/assets/img/favicon.ico'  %}">
+
+</head>
+  <body>
+    <header class="header">
+      <nav class="navbar navbar-expand-lg">
+
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+          <div class="navbar-header">
+            <!-- Navbar Header--><a href="#" class="navbar-brand">
+              <div class="brand-text brand-big visible text-uppercase"><strong class="text-primary">Cold</strong><strong>Where</strong></div>
+              <div class="brand-text brand-sm"><strong class="text-primary">C</strong><strong>W</strong></div></a>
+            <!-- Sidebar Toggle Btn-->
+            <button class="sidebar-toggle"><i class="fa fa-long-arrow-left"></i></button>
+          </div>
+          <div class="right-menu list-inline no-margin-bottom">
+
+
+            <!-- Log out               -->
+            <div class="list-inline-item logout"> <a id="logout" href="{% url 'main:logout' %}" class="nav-link">Logout <i class="icon-logout"></i></a></div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="d-flex align-items-stretch">
+      <!-- Sidebar Navigation-->
+      <nav id="sidebar">
+
+        <!-- Sidebar Navidation Menus--><span class="heading">Main</span>
+        <ul class="list-unstyled">
+                <li class="active"><a href=""> <i class="icon-home"></i>Home </a></li>
+
+                <li><a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-windows"></i>EDI</a>
+                  <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
+                      <li><a href="{% url 'main:account' %}">Account Creation</a></li>
+                    <li><a href="{% url 'main:report' %}">Status Report</a></li>
+
+                  </ul>
+                </li>
+
+      </nav>
+      <!-- Sidebar Navigation end-->
+      <div class="page-content">
+        <div class="page-header">
+          <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">Dashboard</h2>
+          </div>
+        </div>
+        <section class="no-padding-top no-padding-bottom">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-3 col-sm-6">
+                <div class="statistic-block block">
+                  <div class="progress-details d-flex align-items-end justify-content-between">
+                    <div class="title">
+                      <div class="icon"><i class="icon-user-1"></i></div><strong>Alive Connections</strong>
+                    </div>
+                    <div class="number dashtext-1">{{tiles_data.alive_connections}}</div>
+                  </div>
+                  <div class="progress progress-template">
+                    <div role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-1"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6">
+                <div class="statistic-block block">
+                  <div class="progress-details d-flex align-items-end justify-content-between">
+                    <div class="title">
+                      <div class="icon"><i class="icon-contract"></i></div><strong> Connected Connections</strong>
+                    </div>
+                    <div class="number dashtext-2">{{tiles_data.connected_connections}}</div>
+                  </div>
+                  <div class="progress progress-template">
+                    <div role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-2"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6">
+                <div class="statistic-block block">
+                  <div class="progress-details d-flex align-items-end justify-content-between">
+                    <div class="title">
+                      <div class="icon"><i class="icon-paper-and-pencil"></i></div><strong> Total Files Decrypted</strong>
+                    </div>
+                    <div class="number dashtext-3">{{tiles_data.decrypted_files}}</div>
+                  </div>
+                  <div class="progress progress-template">
+                    <div role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-3"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6">
+                <div class="statistic-block block">
+                  <div class="progress-details d-flex align-items-end justify-content-between">
+                    <div class="title">
+                      <div class="icon"><i class="icon-writing-whiteboard"></i></div><strong> Total Sucessful Files</strong>
+                    </div>
+                    <div class="number dashtext-4">{{tiles_data.sucessful_files}}</div>
+                  </div>
+                  <div class="progress progress-template">
+                    <div role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-4"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+           <section class="no-padding-top">
+              <div class="container-fluid">
+                <div class="row">
+
+                  <div class="col-lg-12">
+                    <div class="block">
+                      <div class="title"><strong>FTP Accounts detail</strong></div>
+                      <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                          <thead>
+                            <tr>
+                              <th>IP Address</th>
+                              <th>User Name</th>
+                              <th>Input Path</th>
+                              <th>Output Path</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                              {%  if tiles_data.accounts_count > 0 %}
+                             {%  for account in tiles_data.accounts_detail%}
+                            <tr>
+                              <td>{{account.ipHost}}</td>
+                              <td>{{account.userName}}</td>
+                              <td>{{account.input_path}}</td>
+                              <td>{{account.output_path}}</td>
+                            </tr>
+                            {% endfor  %}
+                            {% else %}
+                                <td colspan="4">No records available.</td>
+                            {% endif %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+
+        <footer class="footer">
+          <div class="footer__block block no-margin-bottom">
+            <div class="container-fluid text-center">
+              <!-- Please do not remove the backlink to us unless you support us at https://bootstrapious.com/donate. It is part of the license conditions. Thank you for understanding :)-->
+              <p class="no-margin-bottom">2018 &copy; Your company. Design by <a href="https://bootstrapious.com">Bootstrapious</a>.</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+       <!-- JavaScript files-->
+       <!-- JavaScript files-->
+       <script src="{% static  'main/assets/vendor/jquery/jquery.min.js'  %}"></script>
+       <script src="{% static  'main/assets/vendor/popper.js/umd/popper.min.js'  %}"> </script>
+       <script src="{% static  'main/assets/vendor/bootstrap/js/bootstrap.min.js'  %}"></script>
+       <script src="{% static  'main/assets/vendor/jquery.cookie/jquery.cookie.js'  %}"> </script>
+
+       <script src="{% static  'main/assets/vendor/jquery-validation/jquery.validate.min.js'  %}"></script>
+       <script src="{% static  'main/assets/js/charts-home.js'  %}"></script>
+       <script src="{% static  'main/assets/js/front.js'  %}"></script>
+  </body>
+</html>

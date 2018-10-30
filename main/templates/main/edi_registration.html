@@ -1,502 +1,451 @@
 {% load  staticfiles %}
-<!doctype html>
-<head>
+<!DOCTYPE html>
+<html>
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-<title>ColdWhere- EDI</title>
-    <meta name="description" content="Ela Admin - HTML5 Admin Template">
+    <title>Dark Bootstrap Admin by Bootstrapious.com</title>
+    <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="{% static 'main/assets_form/images/icons/favicon.ico' %}"/>
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'main/assets_form/vendor/bootstrap/css/bootstrap.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'main/assets_form/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'main/assets_form/fonts/Linearicons-Free-v1.0.0/icon-font.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'main/assets_form/vendor/animate/animate.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'main/assets_form/vendor/css-hamburgers/hamburgers.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'main/assets_form/vendor/animsition/css/animsition.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'main/assets_form/vendor/select2/select2.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'main/assets_form/vendor/daterangepicker/daterangepicker.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'main/assets_form/css/util.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'main/assets_form/css/main.css' %}">
-<!--===============================================================================================-->
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="{% static  'main/assets/vendor/bootstrap/css/bootstrap.min.css'  %}">
+
+    <link rel="stylesheet" href="{% static  'main/assets/vendor/font-awesome/css/font-awesome.min.css'  %}">
+    <!-- Custom Font Icons CSS-->
+    <link rel="stylesheet" href="{% static  'main/assets/css/font.css'  %}">
+
+    <!-- Google fonts - Muli-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:300,400,700">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="{% static  'main/assets/css/style.default.css'  %}" >
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="{% static  'main/assets/css/custom.css'  %}">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="{% static  'main/assets/img/favicon.ico'  %}">
+
+   <style>
+
+   .block{
+
+   margin-top:12px;
+   }
+   </style>
+  </head>
+  <body>
+    <header class="header">
+      <nav class="navbar navbar-expand-lg">
+
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+          <div class="navbar-header">
+            <!-- Navbar Header--><a href="{% url 'main:index' %}" class="navbar-brand">
+              <div class="brand-text brand-big visible text-uppercase"><strong class="text-primary">Cold</strong><strong>Where</strong></div>
+              <div class="brand-text brand-sm"><strong class="text-primary">C</strong><strong>W</strong></div></a>
+            <!-- Sidebar Toggle Btn-->
+            <button class="sidebar-toggle"><i class="fa fa-long-arrow-left"></i></button>
+          </div>
+          <div class="right-menu list-inline no-margin-bottom">
+
+
+            <!-- Log out  -->
+            <div class="list-inline-item logout"> <a id="logout" href="{% url 'main:logout' %}" class="nav-link">Logout <i class="icon-logout"></i></a></div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="d-flex align-items-stretch">
+      <!-- Sidebar Navigation-->
+      <nav id="sidebar">
+
+        <!-- Sidebar Navidation Menus--><span class="heading">Main</span>
+        <ul class="list-unstyled">
+                <li ><a href="{% url 'main:index' %}"> <i class="icon-home"></i>Home </a></li>
+                <li class="active"><a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-windows"></i>EDI</a>
+
+                  <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
+                    <li class="active"><a href="#">Account Creation</a></li>
+
+
+                  </ul>
+                </li>
+
+      </nav>
+      <!-- Sidebar Navigation end-->
+      <div class="page-content">
+        <div class="page-header">
+          <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">EDI Registration</h2>
+          </div>
+        </div>
+       <!-- Breadcrumb-->
+        <div class="container-fluid">
+
+        </div>
+
+       <section class="no-padding-top">
+          <div class="container-fluid">
+            <div class="row">
+              <!-- Basic Form-->
+              <div class="col-lg-8 offset-lg-2">
+                <div class="block">
+                  <div class="block-body">
+                    <form>
+                      <div class="form-group">
+                        <label class="form-control-label" for="iphost"> IP Address</label>
+                        <input type="text" id = "iphost" placeholder="IP Address of your ftp account" class="form-control">
+                      </div>
+					  <div class="form-group">
+                        <label class="form-control-label" for = "username">User Name</label>
+                        <input type="text" id = "username" placeholder="User name of your ftp account" class="form-control">
+                      </div>
+					  <div class="form-group">
+                        <label class="form-control-label" for = "pass">Password</label>
+                        <input type="password" id = "pass"placeholder="Password of your ftp account" class="form-control">
+                      </div>
+					  <div class="form-group">
+                        <label class="form-control-label" for = "inputpath">Input Path</label>
+                        <input type="text" id ="inputpath" placeholder="Path where you will place your input files" class="form-control">
+                      </div>
+					  <div class="form-group">
+                        <label class="form-control-label" for= "outputpath">Output Path</label>
+                        <input type="text" id= "outputpath" placeholder="Path where your output files will get stored" class="form-control">
+                      </div>
+					  <div class="form-group">
+                      <input id="checking"  type="checkbox" name="checking"  class="checkbox-template">
+                      <label for="checking"><b>Do you have different account for output? </b></label>
+                    </div>
+					  <div class="form-group" style="display:none" id = "iphostoutdiv">
+                        <label class="form-control-label" id ="iphostoutlabel" for = "iphostout">IP Address&nbsp(output)</label>
+                        <input type="text" id ="iphostout" placeholder="IP address of your second ftp account" class="form-control">
+                      </div>
+					  <div class="form-group" style="display:none" id = "usernameoutdiv">
+                        <label class="form-control-label" id ="usernameoutlabel" for = "usernameout">User Name &nbsp(output)</label>
+                        <input type="text" id = "usernameout" placeholder="User name of your second ftp account" class="form-control">
+                      </div>
+                      <div class="form-group" style="display:none" id = "passoutdiv">
+                        <label class="form-control-label" id ="passoutlabel" for = "passout">Password &nbsp(output)</label>
+                        <input type="password" id = "passout" placeholder="Password of your second ftp account" class="form-control">
+                      </div>
+					  <center>
+                      <div class="form-group">
+                        <input type="submit" id ="register" value="Create Account" class="btn btn-primary">
+                      </div>
+					  </center>
+                    </form>
+                  </div>
+                </div>
+              </div>
 
 
 
-    <link rel="apple-touch-icon" href="{% static 'main/images/favicon.png' %}">
-    <link rel="shortcut icon" href="{% static 'main/images/favicon.png' %}">
-
-    <link rel="stylesheet" href="{% static 'main/assets/css/normalize.css' %}">
-    <link rel="stylesheet" href="{% static 'main/assets/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'main/assets/css/font-awesome.min.css' %}">
-    <link rel="stylesheet" href="{% static 'main/assets/css/themify-icons.css' %}">
-    <link rel="stylesheet" href="{% static 'main/assets/css/pe-icon-7-filled.css' %}">
 
 
-    <link href="{% static 'main/assets/weather/css/weather-icons.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/assets/calendar/fullcalendar.css' %}" rel="stylesheet" />
+          </div>
+        </section>
+        <footer class="footer">
+          <div class="footer__block block no-margin-bottom">
+            <div class="container-fluid text-center">
+              <!-- Please do not remove the backlink to us unless you support us at https://bootstrapious.com/donate. It is part of the license conditions. Thank you for understanding :)-->
+              <p class="no-margin-bottom">2018 &copy; Your company. Design by <a href="https://bootstrapious.com">Casadetech</a>.</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- JavaScript files-->
+    <script src="{% static  'main/assets/vendor/jquery/jquery.min.js'  %}"></script>
+    <script src="{% static  'main/assets/vendor/popper.js/umd/popper.min.js'  %}"> </script>
+    <script src="{% static  'main/assets/vendor/bootstrap/js/bootstrap.min.js'  %}"></script>
+    <script src="{% static  'main/assets/vendor/jquery.cookie/jquery.cookie.js'  %}"> </script>
 
-    <link rel="stylesheet" href="{% static 'main/assets/css/style.css' %}">
-    <link href="{% static 'main/assets/css/charts/chartist.min.css' %}" rel="stylesheet">
-    <link href="{% static 'main/assets/css/lib/vector-map/jqvmap.min.css' %}" rel="stylesheet">
-
-
-    <style>
-    #weatherWidget .currentDesc {
-        color: #ffffff!important;
-    }
-        .traffic-chart {
-            min-height: 335px;
-        }
-        #flotPie1  {
-            height: 150px;
-        }
-        #flotPie1 td {
-            padding:3px;
-        }
-        #flotPie1 table {
-            top: 20px!important;
-            right: -10px!important;
-        }
-        .chart-container {
-            display: table;
-            min-width: 270px ;
-            text-align: left;
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-        #flotLine5  {
-             height: 105px;
-        }
-
-        #flotBarChart {
-            height: 150px;
-        }
-        #cellPaiChart{
-            height: 160px;
-        }
-
-		#mainForm{
-			position:relative;
-			padding-left:100px;
-			margin-left:220px;
-			margin-bottom:45px;
+    <script src="{% static  'main/assets/vendor/jquery-validation/jquery.validate.min.js'  %}"></script>
+    <script src="{% static  'main/assets/js/charts-home.js'  %}"></script>
+    <script src="{% static  'main/assets/js/front.js'  %}"></script>
+	<script>
+	var checkboxStatus = false ;
+    $( document ).ready(function() {
+    refreshing();
+	$('input[type="checkbox"]').click(function(){
+		if($(this).prop("checked") == true){
+		checkboxStatus = true ;
+		displayingFields(["#iphostoutdiv", "#usernameoutdiv", "#passoutdiv","#iphostout","#iphostoutlabel","#usernameoutlabel","#usernameout","#passout","#passoutlabel"]);
+		document.getElementById("register").disabled = true;
+		document.getElementById("iphostout").disabled = false;
+		document.getElementById('iphostout').focus();
 		}
+		else if($(this).prop("checked") == false){
+		checkboxStatus = false ;
+		hidingFields(["#iphostout","#iphostoutlabel","#usernameoutlabel","#usernameout","#passout","#passoutlabel"]);
+		document.getElementById("register").disabled = false;
+		disablingFields(["iphostout","usernameout","passout"]);
+		makingTextFieldEmpty(["iphostout","usernameout","passout"]);
 
-    </style>
-
-</head>
-<body>
-
-
-    <!-- Left Panel -->
-    <aside id="left-panel" class="left-panel">
-        <nav class="navbar navbar-expand-sm navbar-default">
-            <div id="main-menu" class="main-menu collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active">
-                        <a href="{% url 'main:index'  %}"><i class="menu-icon fa fa-laptop"></i>Home </a>
-                    </li>
-                    <li class="menu-title">Account</li><!-- /.menu-title -->
-                    <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Settings</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-puzzle-piece"></i><a href="">New EDI Account</a></li>
-
-                        </ul>
-                    </li>
-
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </nav>
-    </aside><!-- /#left-panel -->
-    <!-- Left Panel -->
-
-
-
-    <!-- Right Panel -->
-    <div id="right-panel" class="right-panel">
-<div id="snackbar"></div>
-        <!-- Header-->
-        <header id="header" class="header">
-            <div class="top-left">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="./"><img src="images/logo.png" alt="Logo"></a>
-                    <a class="navbar-brand hidden" href="./"><img src="images/logo2.png" alt="Logo"></a>
-                    <a id="menuToggle" class="menutoggle"><i class="fa fa-bars"></i></a>
-                </div>
-            </div>
-            <div class="top-right">
-                <div class="header-menu">
-                    <div class="header-left">
-                        <button class="search-trigger"><i class="fa fa-search"></i></button>
-                        <div class="form-inline">
-                            <form class="search-form">
-                                <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
-                                <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
-                            </form>
-                        </div>
-
-                        <div class="dropdown for-notification">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-bell"></i>
-                                <span class="count bg-danger">3</span>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="notification">
-                                <p class="red">You have 3 Notification</p>
-                                <a class="dropdown-item media" href="#">
-                                    <i class="fa fa-check"></i>
-                                    <p>Server #1 overloaded.</p>
-                                </a>
-                                <a class="dropdown-item media" href="#">
-                                    <i class="fa fa-info"></i>
-                                    <p>Server #2 overloaded.</p>
-                                </a>
-                                <a class="dropdown-item media" href="#">
-                                    <i class="fa fa-warning"></i>
-                                    <p>Server #3 overloaded.</p>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="dropdown for-message">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="message" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-envelope"></i>
-                                <span class="count bg-primary">4</span>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="message">
-                                <p class="red">You have 4 Mails</p>
-                                <a class="dropdown-item media" href="#">
-                                    <span class="photo media-left"><img alt="avatar" src="images/avatar/1.jpg"></span>
-                                    <div class="message media-body">
-                                        <span class="name float-left">Jonathan Smith</span>
-                                        <span class="time float-right">Just now</span>
-                                        <p>Hello, this is an example msg</p>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item media" href="#">
-                                    <span class="photo media-left"><img alt="avatar" src="images/avatar/2.jpg"></span>
-                                    <div class="message media-body">
-                                        <span class="name float-left">Jack Sanders</span>
-                                        <span class="time float-right">5 minutes ago</span>
-                                        <p>Lorem ipsum dolor sit amet, consectetur</p>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item media" href="#">
-                                    <span class="photo media-left"><img alt="avatar" src="images/avatar/3.jpg"></span>
-                                    <div class="message media-body">
-                                        <span class="name float-left">Cheryl Wheeler</span>
-                                        <span class="time float-right">10 minutes ago</span>
-                                        <p>Hello, this is an example msg</p>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item media" href="#">
-                                    <span class="photo media-left"><img alt="avatar" src="images/avatar/4.jpg"></span>
-                                    <div class="message media-body">
-                                        <span class="name float-left">Rachel Santos</span>
-                                        <span class="time float-right">15 minutes ago</span>
-                                        <p>Lorem ipsum dolor sit amet, consectetur</p>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="user-area dropdown float-right">
-                        <a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
-                        </a>
-
-                        <div class="user-menu dropdown-menu">
-                            <a class="nav-link" href="#"><i class="fa fa-user"></i>My Profile</a>
-
-                            <a class="nav-link" href="#"><i class="fa fa-bell-o"></i>Notifications <span class="count">13</span></a>
-
-                            <a class="nav-link" href="#"><i class="fa fa-cog"></i>Settings</a>
-
-                            <a class="nav-link" href="{% url 'main:logout'  %}"><i class="fa fa-power-off"></i>Logout</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header><!-- /header -->
-        <!-- Header-->
+		}
+	});
+ /// button functionality .
+                $("#register").click(function(){
+              // mean all textfields are not enabled . (ip and out ips are same)
+                      // email =   "{{  cookie_email }}";
+                       inputPath = $("#inputpath").val()
+                       outputPath= $("#outputpath").val()
+                        if($("input[name=checking]").prop('checked') == true){
+                             var ip_hostIn = $("#iphost").val();
+                             var user_nameIn = $("#username").val();
+                             var passwordIn =$("#pass").val();
+                             var ip_hostOut = $("#iphostout").val();
+                             var user_nameOut = $("#usernameout").val();
+                             var passwordOut =$("#passout").val()
+                       }
+                       else {
+                           var ip_hostIn = $("#iphost").val();
+                           var user_nameIn = $("#username").val();
+                           var passwordIn =$("#pass").val();
+                           var ip_hostOut = $("#iphost").val();
+                           var user_nameOut = $("#username").val();
+                           var passwordOut =$("#pass").val();
+                       }
 
 
-        <div class="content pb-0">
+                       $.ajax({
+                           url :  "{% url 'main:account'%}",
+                           type: "post",
+                           data: {
+                               csrfmiddlewaretoken: '{{ csrf_token }}' ,
+                                //"email":email,
+                               "iphost": ip_hostIn ,
+                                "username": user_nameIn,
+                                "password": passwordIn,
+                               "inputpath":inputPath,
+                                "outputpath":outputPath,
+                               "iphostOut":ip_hostOut,
+                               "usernameOut":user_nameOut,
+                               "passwordOut":passwordOut
+
+                           },
+                           success: function(response) {
+                            //   makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
+                               //alert("data inserted !")
+                               swal(
+                                          'Good job!',
+                                          'You clicked the button!',
+                                          'success'
+                                        )
+
+                           },
+                           error: function(jqXHR, textStatus, errorThrown){
+
+                              alert("data inserted !!!")
+                  }
+
+                       })
+
+      });
+
+ /// button functionality ends here .
+  });
+  function refreshing(){
+  document.getElementById('iphost').focus();
+  document.getElementById('iphost').value = '';
+  disablingFields(["username","pass","inputpath",
+	"outputpath","checking","register","iphostout","usernameout","passout"]);
+	  makingTextFieldEmpty(["username","pass","inputpath",
+	"outputpath","iphostout","usernameout","passout"]);
 
 
-			<div class="wrap-login100 p-l-85 p-r-85 p-t-55 p-b-55" id = "mainForm">
-				<form class="login100-form validate-form flex-sb flex-w">
-					<span class="login100-form-title p-b-32">
-						EDI ACCOUNT CREATION
-					</span>
+  }
 
-					<span class="txt1 p-b-11">
-						Host-IP Address
-					</span>
-					<div class="wrap-input100 validate-input m-b-36" data-validate = "IP host is required">
-						<input class="input100" type="text" name="iphost" id = "Iphost">
-						<span class="focus-input100"></span>
-					</div>
-
-					<span class="txt1 p-b-11">
-						Username
-					</span>
-					<div class="wrap-input100 validate-input m-b-36" data-validate = "Username is required">
-						<input class="input100" type="text" name="username" id = "userName">
-						<span class="focus-input100"></span>
-					</div>
-
-
-					<span class="txt1 p-b-11">
-						Password
-					</span>
-					<div class="wrap-input100 validate-input m-b-12" data-validate = "Password is required">
-						<span class="btn-show-pass">
-							<i class="fa fa-eye"></i>
-						</span>
-						<input class="input100" type="password" name="pass" id = "password">
-						<span class="focus-input100"></span>
-					</div>
-
-					<span class="txt1 p-b-11">
-						Input Path
-					</span>
-					<div class="wrap-input100 validate-input m-b-36" data-validate = "Input Path is required">
-						<input class="input100" type="text" name="inputpath" id = "inputPath" >
-						<span class="focus-input100"></span>
-					</div>
-
-					<span class="txt1 p-b-11">
-						Output Path
-					</span>
-                    <div class="wrap-input100 validate-input m-b-36" data-validate = "Output Path is required">
-						<input class="input100" type="text" name="outputpathdir" id = "outputPath">
-						<span class="focus-input100"></span>
-					</div>
-
-
-					<div class="flex-sb-m w-full p-b-48">
-						<div class="contact100-form-checkbox">
-							<input class="input-checkbox100" id="ckb1" type="checkbox" name="checking">
-							<label class="label-checkbox100" for="ckb1">
-							 Ouput directory have a different IP host?
-							</label>
-						</div>
-					</div>
-
-					<span class="txt1 p-b-11">
-						Host-IP Address (Output)
-					</span>
-
-					<div class="wrap-input100 validate-input m-b-36" data-validate = "IP host is required">
-						<input class="input100" type="text" name="iphostout" id = "IPhostOut"  >
-						<span class="focus-input100"></span>
-					</div>
-
-					<span class="txt1 p-b-11">
-						User Name (Output)
-					</span>
-					<div class="wrap-input100 validate-input m-b-36" data-validate = "Username is required"  >
-						<input class="input100" type="text" name="usernameout" id ="userNameout">
-						<span class="focus-input100"></span>
-					</div>
-						<span class="txt1 p-b-11">
-						Password (Output)
-					</span>
-					<div class="wrap-input100 validate-input m-b-12" data-validate = "Password is required">
-						<span class="btn-show-pass">
-							<i class="fa fa-eye"></i>
-						</span>
-						<input class="input100" type="password" name="passout"  id = "passwordOut">
-						<span class="focus-input100"></span>
-					</div>
-					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" id = "submitForm">
-							Register
-						</button>
-					</div>
-
-				</form>
-			</div>
-
-
-
-	<div id="dropDownSelect1"></div>
-
-<!--===============================================================================================-->
-	<script src="{% static 'main/assets_form/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'main/assets_form/vendor/animsition/js/animsition.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'main/assets_form/vendor/bootstrap/js/popper.js' %}"></script>
-	<script src="{% static 'main/assets_form/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'main/assets_form/vendor/select2/select2.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'main/assets_form/vendor/daterangepicker/moment.min.js' %}"></script>
-	<script src="{% static 'main/assets_form/vendor/daterangepicker/daterangepicker.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'main/assets_form/vendor/countdowntime/countdowntime.js' %}"></script>
-<!--===============================================================================================-->
-	<script
-	src="https://code.jquery.com/jquery-3.3.1.js"
-	integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="crossorigin="anonymous"></script>
-
-<!--===============================================================================================-->
-	<script src="{% static 'main/assets_form/js/main.js' %}"></script>
-<!--===============================================================================================-->
-
-	<script type="text/javascript">
-
-    function displayingSnackBar($message){
-      var snackbar = document.getElementById("snackbar");
-      snackbar.innerHTML = "";
-      snackbar.innerHTML += $message;
-      snackbar.className = "show";
-      setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 2000);
-    }
-
-    function validatingTextFields(textfieldArray){
-        var buttonstatus = false;
-        for (i = 0; i < textfieldArray.length; i++) {
-            if(document.getElementById(textfieldArray[i]).value ==="")
-            buttonstatus = false;
-            else
-            buttonstatus = true;
-}
-            return buttonstatus;
-
-
-    }
-	function makingTextFieldEmpty(textfieldArray){
+   	function makingTextFieldEmpty(textfieldArray){
 		for (i = 0; i < textfieldArray.length; i++) {
 			document.getElementById(textfieldArray[i]).value = "";
 		}
 	}
 
-	function changingColor(textfieldArray,color){
-		for (i = 0; i < textfieldArray.length; i++) {
-			document.getElementById(textfieldArray[i]).style.backgroundColor = color;
+  function disablingFields(textfields){
+ 	for (i = 0; i < textfields.length; i++) {
+	document.getElementById(textfields[i]).disabled=true;
 		}
+ }
+  function disablingEmptyFields(textfields){
+ 	for (i = 0; i < textfields.length; i++) {
+	if (!document.getElementById(textfields[i]).value )
+	document.getElementById(textfields[i]).disabled=true;
+		}
+ }
+
+  function hidingFields(textfields){
+  for (i = 0; i < textfields.length; i++) {
+			$(textfields[i]).fadeOut(1000);
+		}
+  }
+
+  function displayingFields(textfields){
+	for (i = 0; i < textfields.length; i++) {
+			$(textfields[i]).fadeIn(1000);
+		}
+  }
+
+   function enablingField(textfields){
+   for (i = 0; i < textfields.length; i++) {
+	if ((!document.getElementById(textfields[i]).value) && (!document.getElementById(textfields[i]).disabled )) {
+		break;
+		}
+
+	else if ((!document.getElementById(textfields[i]).value) && document.getElementById(textfields[i]).disabled ) {
+		document.getElementById(textfields[i]).disabled=false;
+		break;
+		}
+
+   }
+  }
+
+   function validatingAboveFields(textfields){
+     var checkingStatus = false;
+
+	   for (i = 0; i < textfields.length; i++) {
+		textfield = $(textfields[i]).val().trim()
+
+
+	if ((textfield.length) > 0) {
+
+		checkingStatus = true ;
+
+		}
+
+	else if ((textfield.length) < 0) {
+		checkingStatus = false ;
+		break ;
+		}
+   }
+
+	return checkingStatus;
 	}
 
-	function changingTextFieldStatus(textfieldArray,status){
-		for (i = 0; i < textfieldArray.length; i++) {
-			$(textfieldArray[i]).prop('disabled', status);
+ $('#iphost').on('keyup',function(){
+        // vaidating input.
+        var textvalue = $(this).val().trim();
+		// value of the input field next to it .
+        if ((textvalue.length >0)) {
+		 //document.getElementById("username").disabled = false;
+		 	enablingField(["username","pass","inputpath",
+		"outputpath","iphostout","usernameout","passout"]);
+		}
+		else if ((textvalue.length  == 0)) {
+		disablingEmptyFields(["username","pass","inputpath",
+		"outputpath","iphostout","usernameout","passout"]);
 		}
 
-	}
-    $(document).ready(function(){
-        var checkboxStatus = "false";
-		changingTextFieldStatus(["#IPhostOut", "#userNameout", "#passwordOut"], true);
-		changingColor(["IPhostOut", "userNameout", "passwordOut"], "#cccccc");
+		});
+   $('#username').on('keyup',function(){
+        // vaidating cuurent input.
+        var textvalue = $(this).val().trim();
+		// validating the previous text fields .
+		var status =  validatingAboveFields(["#iphost"]);
+			console.log(status);
+        if ((textvalue.length >0) && status ){
+		 //document.getElementById("pass").disabled = false;
+		 enablingField(["pass","inputpath",
+		"outputpath","iphostout","usernameout","passout"]);
+		}
+		else if ((textvalue.length  == 0)) {
+		disablingEmptyFields(["pass","inputpath",
+		"outputpath","iphostout","usernameout","passout"]);
+		}
 
-        $('input[type="checkbox"]').click(function(){
-            if($(this).prop("checked") == true){
-                checkboxStatus = "true";
-				changingTextFieldStatus(["#IPhostOut", "#userNameout", "#passwordOut"], false);
-				changingColor(["IPhostOut", "userNameout", "passwordOut"], "#fff");
+ });
+   $('#pass').on('keyup',function(){
+        // vaidating input.
+        var textvalue = $(this).val().trim();
+		var status = validatingAboveFields(["#iphost" , "#username"]);
+        if ((textvalue.length >0) && status) {
+		 //document.getElementById("inputpath").disabled = false;
+		 enablingField(["inputpath",
+		"outputpath","iphostout","usernameout","passout"]);
+		}
+		else if ((textvalue.length  == 0)) {
+		disablingEmptyFields(["inputpath",
+		"outputpath","iphostout","usernameout","passout"]);
+		}
+ });
+   $('#inputpath').on('keyup',function(){
+        // vaidating input.
+
+        var textvalue = $(this).val().trim();
+		var status = validatingAboveFields(["#iphost","#username" ,"#pass"]);
+        if ((textvalue.length >0) && status ) {
+		 //document.getElementById("outputpath").disabled = false;
+		enablingField(["outputpath","iphostout","usernameout","passout"]);
+		}
+		else if ((textvalue.length  == 0)) {
+		disablingEmptyFields(["outputpath","iphostout","usernameout","passout"]);
+		}
+ });
+    $('#outputpath').on('keyup',function(){
+        // vaidating input.
+
+        var textvalue = $(this).val().trim();
+		var status = validatingAboveFields(["#iphost","#username", "#pass","#inputpath"]);
+
+		  console.log("length "+textvalue.length);
+		  console.log("status: "+ status);
+		  console.log("cb: "+ checkboxStatus );
+
+        if ((textvalue.length >0)&& status && (!checkboxStatus )) {
+		 document.getElementById("checking").disabled = false;
+		 document.getElementById("register").disabled = false;
+		}
+		else if ((textvalue.length >0)&& (status) && (checkboxStatus)) {
+
+		 document.getElementById("checking").disabled = false;
+		  enablingField(["iphostout","usernameout","passout"]);
+		}
+
+		else if ((textvalue.length  == 0)) {
+		disablingEmptyFields(["iphostout","usernameout","passout"]);
+		}
+ });
+
+
+	$('#iphostout').on('keyup',function(){
+		var textvalue = $(this).val().trim();
+			var status = validatingAboveFields(["#iphost" , "#username" ,
+			"#pass","#inputpath","#outputpath"]);
+			if ((textvalue.length >0) && status) {
+			 enablingField(["usernameout","passout"]);
+
 			}
-            else if($(this).prop("checked") == false){
-                checkboxStatus = "false";
-				changingTextFieldStatus(["#IPhostOut", "#userNameout", "#passwordOut"], true);
-			    changingColor(["IPhostOut", "userNameout", "passwordOut"], "#cccccc");
-			    makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut"]);
+			else if ((textvalue.length  == 0)) {
+			disablingEmptyFields(["usernameout","passout"]);
+
+					}
+		 });
+
+  $('#usernameout').on('keyup',function(){
+				// vaidating input.
+				var textvalue = $(this).val().trim();
+				var status = validatingAboveFields(["#iphost" , "#username" ,
+			"#pass","#inputpath","#outputpath","#iphostout"]);
+				if ((textvalue.length >0) && status) {
+			 enablingField(["passout"]);
 
 			}
-        });
+			else if ((textvalue.length  == 0)) {
+			disablingEmptyFields(["passout"]);
 
+					}
+		 });
+	$('#passout').on('keyup',function(){
+				// vaidating input.
+				var status = validatingAboveFields(["#iphost" , "#username" ,
+			"#pass","#inputpath","#outputpath","#iphostout"]);
+				var textvalue = $(this).val().trim();
+				if ((textvalue.length >0) && status) {
+				 document.getElementById("register").disabled = false;
+				}
+		else if ((textvalue.length  == 0)) {
+					document.getElementById("register").disabled = true;
 
-        $("#submitForm").click(function(){
-                // mean all textfields are not enabled . (ip and out ips are same)
-                if (checkboxStatus === "false"){
-                    buttonStatus =  validatingTextFields(["password", "userName", "inputPath", "outputPath", "Iphost"])
-                }
-                else {
-                buttonStatus =  validatingTextFields(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
-                }
-                if (buttonStatus){
-                         email =   "{{  cookie_email }}";
-                         inputPath = $("input[name=inputpath]").val()
-                         outputPath= $("input[name=outputpathdir]").val()
-                          if($("input[name=checking]").prop('checked') == true){
-                               var ip_hostIn = $("input[name=iphost]").val();
-                               var user_nameIn = $("input[name=username]").val();
-                               var passwordIn =$("input[name=pass]").val();
-                               var ip_hostOut = $("input[name=iphostout]").val();
-                               var user_nameOut = $("input[name=usernameout]").val();
-                               var passwordOut =$("input[name=passout]").val()
-                         }
-                         else {
-                             var ip_hostIn = $("input[name=iphost]").val();
-                             var user_nameIn = $("input[name=username]").val();
-                             var passwordIn =$("input[name=pass]").val();
-                             var ip_hostOut = $("input[name=iphost]").val();
-                             var user_nameOut = $("input[name=username]").val();
-                             var passwordOut =$("input[name=pass]").val();
-                         }
-
-                         $.ajax({
-                             url :  "{% url 'main:account'%}",
-                             type: "post",
-                             data: {
-                                 csrfmiddlewaretoken: '{{ csrf_token }}' ,
-                                 "email":email,
-                                 "iphost": ip_hostIn ,
-                                 "username": user_nameIn,
-                                 "password": passwordIn,
-                                 "inputpath":inputPath,
-                                 "outputpath":outputPath,
-                                 "iphostOut":ip_hostOut,
-                                 "usernameOut":user_nameOut,
-                                 "passwordOut":passwordOut
-
-                             },
-                             success: function(response) {
-                                 makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
-                                 displayingSnackBar("Account created !")
-                             },
-                             error: function(jqXHR, textStatus, errorThrown){
-                                displayingSnackBar("Some thing went wrong , try again.")
-                    }
-
-                         })
-                }
-                else {
-                    displayingSnackBar ("Fill out your form properly , in order to create an account")
-                }
-        });
-    });
-	</script>
-        </div> <!-- .content -->
-        <div class="clearfix"></div>
-
-        <footer class="site-footer">
-            <div class="footer-inner bg-white">
-                <div class="row">
-                    <div class="col-sm-6">
-                        Copyright &copy; 2018 Coldwhere
-                    </div>
-                    <div class="col-sm-6 text-right">
-                        Designed by <a href="https://casadetech.com">Casadetech</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
-    </div><!-- /#right-panel -->
-<div id="container">
-</div>
-</body>
+							}
+		 });
+  </script>
+  </body>
 </html>

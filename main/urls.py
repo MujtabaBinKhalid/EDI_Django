@@ -4,8 +4,11 @@ from django.conf.urls import url
 
 app_name = 'main'
 urlpatterns = [
-    # /indexPage/
     url(r'^$', views.index, name="index"),
     url(r'^creatingAccount/$', views.accountCreation, name="account"),
-    url(r'^logout$', views.logout, name="logout")
+    url(r'^statusReport/$', views.statusReport, name="report"),
+    url(r'^companyActiveLoads/$', views.activeLoads, name="activeLoads"),
+    url(r'^logout$', views.logout, name="logout"),
+    url(r'^generatingReport/$', views.generatingReport, name="generating_report"),
+    url(r'^establishingConnection/$', views.establishingConnection, name="establishingConnection"),
 ]

@@ -2,154 +2,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login</title>
+	<title>Login V3</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="{% static 'Login /images/icons/favicon.ico' %}"/>
+	<link rel="icon" type="image/png" href="{% static  'Login/assets/images/icons/favicon.ico'  %}"/>
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'Login/vendor/bootstrap/css/bootstrap.min.css ' %}">
+	<link rel="stylesheet" type="text/css" href="{% static  'Login/assets/vendor/bootstrap/css/bootstrap.min.css'  %}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'Login/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static  'Login/assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css'  %}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'Login/fonts/iconic/css/material-design-iconic-font.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static  'Login/assets/fonts/iconic/css/material-design-iconic-font.min.css'  %}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'Login/vendor/animate/animate.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static  'Login/assets/vendor/animate/animate.css'  %}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'Login/vendor/css-hamburgers/hamburgers.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static  'Login/assets/vendor/css-hamburgers/hamburgers.min.css'  %}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'Login/vendor/animsition/css/animsition.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static  'Login/assets/vendor/animsition/css/animsition.min.css'  %}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'Login/vendor/select2/select2.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static  'Login/assets/vendor/select2/select2.min.css'  %}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'Login/vendor/daterangepicker/daterangepicker.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static  'Login/assets/vendor/daterangepicker/daterangepicker.css'  %}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'Login/css/util.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'Login/css/main.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static  'Login/assets/css/util.css'  %}">
+	<link rel="stylesheet" type="text/css" href="{% static  'Login/assets/css/main.css'  %}">
 <!--===============================================================================================-->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<style>
-#snackbar {
-    min-width: 250px;
-    margin-left: -125px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 2px;
-    padding: 16px;
-    position: fixed;
-    z-index: 1;
-    left: 50%;
-    font-size: 17px;
-}
 
-#snackbar.show {
-    visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
 
-@-webkit-keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-}
 
-@keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-}
-
-@-webkit-keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-}
-
-@keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-}
-
-</style>
 </head>
-<body>
-		{% if error %}
-		<div id="snackbar">"Wrong credentials, try again !"</div>
+<body style="background-color:#22252a;">
+	{% if error %}
+	<div class="alert alert-danger">
+<strong>In Correct Credentials try again!</strong>
+</div>
 		{% endif %}
-		<div class="limiter">
-			<div class="container-login100">
-				<div class="wrap-login100 p-l-85 p-r-85 p-t-55 p-b-55">
-					<form class="login100-form validate-form flex-sb flex-w" method = "POST" action = "{% url 'login:index' %}">
-						{% csrf_token %}
+	<div class="limiter" >
+		<div class="container-login100" >
+			<div class="wrap-login100">
+				<form class="login100-form validate-form" method = "POST" action = "{% url 'login:index' %}">
+				{% csrf_token %}
+					<span class="login100-form-logo">
+						<i class="zmdi zmdi-landscape"></i>
+					</span>
 
-						<span class="login100-form-title p-b-32">
-							ColdWhere Login
-						</span>
+					<span class="login100-form-title p-b-34 p-t-27">
+						COLDWHERE-EDI
+					</span>
 
-						<span class="txt1 p-b-11">
-							Username
-						</span>
-						<div class="wrap-input100 validate-input m-b-36" data-validate = "Username is required">
-							<input class="input100" type="text" name="username" id = "name" required>
-							<span class="focus-input100"></span>
-						</div>
+					<div class="wrap-input100 validate-input" data-validate = "Enter your email">
+						<input class="input100"  id="login-email" type="text" name="username" placeholder="Email">
+						<span class="focus-input100" data-placeholder="&#xf207;"></span>
+					</div>
 
-						<span class="txt1 p-b-11">
-							Password
-						</span>
-						<div class="wrap-input100 validate-input m-b-12" data-validate = "Password is required">
-							<span class="btn-show-pass">
-								<i class="fa fa-eye"></i>
-							</span>
-							<input class="input100" type="password" name="pass" id = "pass" required>
-							<span class="focus-input100"></span>
-						</div>
+					<div class="wrap-input100 validate-input" data-validate="Enter password">
+						<input class="input100" id="login-password" type="password" name="pass" placeholder="Password">
+						<span class="focus-input100" data-placeholder="&#xf191;"></span>
+					</div>
 
-						<div class="flex-sb-m w-full p-b-48">
-							<div class="contact100-form-checkbox">
-								<input class="input-checkbox100" id="ckb1" type="checkbox" name="option" value = "off">
-								<label class="label-checkbox100" for="ckb1">
-									<b>Login as Company</b>
-								</label>
-							</div>
+					<div class="contact100-form-checkbox">
+						<input class="input-checkbox100" id="login-company" type="checkbox" name="option">
+						<label class="label-checkbox100" for="login-company">
+							Login as Company
+						</label>
+					</div>
 
-							<div>
-								<a href="#" class="txt3">
-									Forgot Password?
-								</a>
-							</div>
-						</div>
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn" id="login">
+							Login
+						</button>
+					</div>
 
-						<div class="container-login100-form-btn">
-							<button class="login100-form-btn" type = "submit">
-								Login
-							</button>
-						</div>
 
-					</form>
-				</div>
+				</form>
 			</div>
 		</div>
+	</div>
 
 
-		<div id="dropDownSelect1"></div>
+	<div id="dropDownSelect1"></div>
 
+<!--===============================================================================================-->
+	<script src="{% static  'Login/assets/vendor/jquery/jquery-3.2.1.min.js'  %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static  'Login/assets/vendor/animsition/js/animsition.min.js'  %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static  'Login/assets/vendor/bootstrap/js/popper.js'  %}"></script>
+	<script src="{% static  'Login/assets/vendor/bootstrap/js/bootstrap.min.js'  %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static  'Login/assets/vendor/select2/select2.min.js'  %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static  'Login/assets/vendor/daterangepicker/moment.min.js'  %}"></script>
+	<script src="{% static  'Login/assets/vendor/daterangepicker/daterangepicker.js'  %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static  'Login/assets/vendor/countdowntime/countdowntime.js'  %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static  'Login/assets/js/main.js'  %}"></script>
+<script>
+var checkingStatus = false ;
+    $( document ).ready(function() {
+    refreshing();
+	$('input[type="checkbox"]').click(function(){
+		if($(this).prop("checked") == true)
+		 checkboxStatus = true ;
+		else if($(this).prop("checked") == false)
+		 checkboxStatus = false ;
+	});
+  });
+  function refreshing(){
+  document.getElementById('login-email').focus();
+  document.getElementById('login-email').value = '';
+  document.getElementById("login-password").disabled = true;
+  document.getElementById("login-company").disabled=true;
+  document.getElementById("login").disabled=true;
+  }
+  $('#login-email').on('keyup',function(){
+        // vaidating input.
+        var email = $(this).val();
+		var password = $("#login-password"). val();
+        // if (isEmail(email) && (email.length >0)) {
+		//  document.getElementById("login-password").disabled = false;
+		// }
+		if ( (email.length >0)) {
+		 document.getElementById("login-password").disabled = false;
+		}
 
-<!--===============================================================================================-->
-	<script src="{% static 'Login/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'Login/vendor/animsition/js/animsition.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'Login/vendor/bootstrap/js/popper.js' %}"></script>
-	<script src="{% static 'Login/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'Login/vendor/select2/select2.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'Login/vendor/daterangepicker/moment.min.js' %}"></script>
-	<script src="{% static 'Login/vendor/daterangepicker/daterangepicker.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'Login/vendor/countdowntime/countdowntime.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'Login/js/main.js' %}"></script>
+	// email is null , password entered , checkbox checked.
+		else if  ((email.length  == 0) && (password.length > 0) && (checkboxStatus)){
+			document.getElementById("login-password").disabled = false;
+			document.getElementById("login-company").disabled=false;
+			 document.getElementById("login").disabled=true;
+		}
+		// email is null , password entered , checkbox not checked.
+		else if  ((email.length  == 0) && (password.length > 0) && (!checkboxStatus)){
+			document.getElementById("login-password").disabled = false;
+			document.getElementById("login-company").disabled=true;
+			 document.getElementById("login").disabled=true;
+		}
+		 // email null , password null ,
+		else if  ((email.length  == 0) && (password.length ==  0)){
+			document.getElementById("login-password").disabled = true;
+			document.getElementById("login-company").disabled=true;
+			 document.getElementById("login").disabled=true;
+		}
+ });
 
+ $('#login-password').on('keyup',function(){
+        var password = $(this).val();
+		var email = $("#login-email"). val();
+        if ((password.length >0) && (email.length >0)) {
+		  document.getElementById("login-company").disabled=false;
+		  document.getElementById("login").disabled=false;
+		}
+		else  if ((password.length == 0) ){
+		document.getElementById("login-company").disabled=true;
+		 document.getElementById("login").disabled=true;
+		}
+
+ });
+ function isEmail(email) {
+  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}
+  </script>
 </body>
 </html>

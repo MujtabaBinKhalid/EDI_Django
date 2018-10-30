@@ -14,17 +14,18 @@ def index(request):
     if request.method == "GET":
         try:
             sessionData = request.session['name']
-            return render(request, 'main/index.html')
-
+            return redirect("main:index")
         except Exception as e:
             return render(request, 'Login/index.html')
 
     elif request.method == "POST":
         try:
             loginStatus = request.POST['option']
+            request.session['userStatus'] = "login_company"
             response = "login_company"
             responseValue = authentication(request, "35.161.234.96", 9991, 1024, "login_company")
         except Exception as e:
+            request.session['userStatus'] = "login_user"
             response = "login_user"
             responseValue = authentication(request, "35.161.234.96", 9991, 1024, "login_user")
 
