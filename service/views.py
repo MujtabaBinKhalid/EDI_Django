@@ -37,7 +37,7 @@ def tcpRequest():
                 filepath = innerDirectory+"/"+file
                 ftp.retrbinary('RETR ' + filepath, byteReading.write)
                 readingFile = byteReading.getvalue().decode("utf-8")
-                readingCurrentFile(account, readingFile, innerDirectory, fileName)
+                #readingCurrentFile(account, readingFile, innerDirectory, fileName)
 
 
 def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
@@ -101,14 +101,14 @@ def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
 
 
 def sendingData(accountDetails, data, filepath, fileName):
-   url = "https://api.coldwhere.com/load/companyloadnumbers"
-   payload = json.dumps(data)
-   headers = {
-    'Content-Type': "application/json",
-    'Authorization': "Bearer "+request.session['token'],
-    'cache-control': "no-cache",
-   
-    }
+    url = "https://api.coldwhere.com/load/companyloadnumbers"
+    payload = json.dumps(data)
+    headers = {
+        'Content-Type': "application/json",
+        'Authorization': "Bearer "+request.session['token'],
+        'cache-control': "no-cache",
+    
+        }
 
     response = requests.request("POST", url, data=payload, headers=headers)
 
