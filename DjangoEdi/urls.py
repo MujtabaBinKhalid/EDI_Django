@@ -8,7 +8,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'', include("Login.urls")),
     path('index/', include("main.urls")),
-    path('status/', include("statusReport.urls")),
 ]
 
 # try:

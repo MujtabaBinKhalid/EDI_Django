@@ -9,26 +9,52 @@ import time
 import json
 import socket
 import io
+import requests
+import json
 
 
-def fetchingCompaniesAndLoads(ip_address, port_number, bufferSize, messageType, jsonKey, jsonValue):
-    data = {}
-    TCP_IP = ip_address
-    TCP_PORT = port_number
-    BUFFER_SIZE = bufferSize
-    data['message_type'] = messageType
-    data[jsonKey] = jsonValue
-    json_data = json.dumps(data)
-    MESSAGE = json_data
-    tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_socket.connect((TCP_IP, TCP_PORT))
-    tcp_socket.sendto(MESSAGE.encode(), (TCP_IP, TCP_PORT))
-    data = tcp_socket.recv(BUFFER_SIZE)
-    tcp_socket.close()
-    responseInstring = data.decode("utf-8")
-    json_acceptable_string = responseInstring.replace("'", "\"")
-    dictionary = json.loads(json_acceptable_string)
-    return dictionary["details"]
+# it is used to fetch all the companies on the reqyuest of the super admin .
+def fetchingCompanies(request):
+    url = "https://api.coldwhere.com/company/allcompanies"
+
+    payload = ""
+    headers = {
+        'Authorization': "Bearer "+request.session['token'],
+        'cache-control': "no-cache",
+        'Content-Type': "application/json",
+        
+        }
+
+    response = requests.request("GET", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
+    
+    if (python_dict.get("status", "empty") == "Success"):
+        return python_dict.get("details", "empty")
+		
+	
+    # it is used to fetch the loads of a specfic company
+def fetchingLoads(request , companyEmail):
+
+    url = "https://api.coldwhere.com/load/companyloadnumbers"
+
+    data = {'company_email': companyEmail }
+    payload = json.dumps(data)
+    headers = {
+        'Content-Type': "application/json",
+        'Authorization': "Bearer "+request.session['token'],
+        'cache-control': "no-cache",
+        
+        }
+
+    response = requests.request("POST", url, data=payload, headers=headers)
+
+    python_dict =  json.loads(response.text)
+
+
+    if (python_dict.get("status", "empty") == "Success"):
+        return python_dict.get("details", "empty")
+     
+	
 
 
 def activeConnections(request, session_name):
@@ -84,8 +110,26 @@ def company_FtpAccounts(request, session_name, accountDetail):
     except Exception as e:
         request.session[session_name] = "0"
 
+# def companySucessfulFiles (request, accountDetail):
+#     try:
+#         ftp = ftplib.FTP(accountDetail.ipHost, accountDetail.userName,
+#                          accountDetail.password)
 
-def company_files(out_queue, accountDetail, folder):
+     
+#         folderpath = accountDetail.input_path + "/sucessful"
+        
+
+#         files = ftp.nlst(folderpath)
+#         request.session["sucessful"] = len(files)
+#         return  request.session["sucessful"]
+
+       
+#     except Exception as e:
+#         request.session["sucessful"] = "0"   
+#         return  HttpResponse(request.session["sucessful"]) 
+
+
+def company_files(request, accountDetail, folder):
     try:
         ftp = ftplib.FTP(accountDetail.ipHost, accountDetail.userName,
                          accountDetail.password)
@@ -99,22 +143,53 @@ def company_files(out_queue, accountDetail, folder):
 
         files = ftp.nlst(folderpath)
         request.session[folder] = len(files)
+        output_files = []
+        for file in files:
+            output_files.append(file)
+
+        request.session["output_files"] = output_files
+        request.session["ftp_username"] = accountDetail.userName
+        request.session["output_path"] = accountDetail.output_path
     except Exception as e:
         request.session[folder] = "0"
+
+def fetchingStatus(request):
+    url = "https://api.coldwhere.com/user/me"
+
+    payload = ""
+    headers = {
+        'Authorization': "Bearer "+request.session['token'],
+        'cache-control': "no-cache",
+        
+        }
+
+    response = requests.request("GET", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
+    if (python_dict.get("status", "empty") == "Success"):
+        return (python_dict.get("details", "empty").get("role"))
+    else:
+        return ("INVALID CREDENTIALS")
+	
 
 
 def index(request):
     # """ Index page, after login """
 
     if request.method == "GET":
-        # try:
-        if (request.session['userStatus'] == "login_company"):
+
+        request.session['role'] = fetchingStatus(request)
+    #  try:
+        if (request.session['role'] == "company"):
+           
             response = fetchingCompanyTilesData(request)
+            
+
             if (response == "noerror"):
                 comapny_tiles_data = {
                     "ftp_accounts": request.session["ftpAccounts"],
                     "decrypted_files": request.session["output"],
-                    "sucessful_files": request.session["sucessful"],
+                    # "sucessful_files": request.session["sucessful"],
+                    "sucessful_files": "0",
                     "unSucessful_files": request.session["notSucessful"],
                 }
             elif(response == "error"):
@@ -126,8 +201,8 @@ def index(request):
                 }
 
             return render(request, 'main/edi_indexCompany.html', {'tiles_data':  comapny_tiles_data})
-        elif(request.session['userStatus'] == "login_user"):
-
+        elif(request.session['role'] == "super_admin"):
+             
             response = fetchingUserTilesData(request)
             if (response == "noerror"):
                 tiles_data = {
@@ -149,20 +224,21 @@ def index(request):
                 }
 
             return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data})
-        # except Exception as e:
-        #     return render(request, 'Login/index.html')
-
+    #  except Exception as e:
+         
+    #     return render(request, 'Login/index.html')
+   
 
 def accountCreation(request):
     if request.is_ajax() or request.method == 'POST':
-        if(request.session['userStatus'] == "login_company"):
+        if(request.session['role'] == "company"):
             edi_account = accountRegistration.objects.create(ipHost=request.POST['iphost'], userName=request.POST['username'],
                                                              password=request.POST['password'], input_path=request.POST['inputpath'],
                                                              output_path=request.POST['outputpath'], ip_hostOut=request.POST['iphostOut'],
                                                              passwordOut=request.POST['passwordOut'],  user_nameOut=request.POST['usernameOut'],
                                                              email=request.session['name'])
             edi_account.save()
-        elif(request.session['userStatus'] == "login_user"):
+        elif(request.session['role'] == "super_admin"):
             edi_account = accountRegistration.objects.create(ipHost=request.POST['iphost'], userName=request.POST['username'],
                                                              password=request.POST['password'], input_path=request.POST['inputpath'],
                                                              output_path=request.POST['outputpath'], ip_hostOut=request.POST['iphostOut'],
@@ -174,13 +250,12 @@ def accountCreation(request):
     elif request.method == "GET":
         try:
             sessionData = request.session['name']
-            if (request.session['userStatus'] == "login_company"):
+            if (request.session['role'] == "company"):
                 return render(request, 'main/edi_registration.html', {'cookie_email':  request.COOKIES.get('user_email')})
-            elif(request.session['userStatus'] == "login_user"):
+            elif(request.session['role'] == "super_admin"):
                  # IP AND THE EMAIL ADDRESS WILL BE CHANGED LATER. IT HAS BEEN USED
                  # AS THE LAT-LONG API GIVE  RESULT ON THE PRODUCTION API LIST.
-                dropdown_data = fetchingCompaniesAndLoads('34.213.95.106', 9991, 1024, 'get_all_companies_names',
-                                                          'email', 'hassan.farrukh@casadetech.com')
+                dropdown_data = fetchingCompanies(request)
                 return render(request, 'main/edi_registration_SuperUser.html', {"dropdown": dropdown_data})
 
         except Exception as e:
@@ -189,39 +264,37 @@ def accountCreation(request):
 
 def activeLoads(request):
       # fetching loads of the logged in
-    if request.session['userStatus'] == "login_company":
-        if request.is_ajax() or request.method == 'POST' and request.session['userStatus'] == "login_company":
-                # return HttpResponse(request.session['name'])
-            dropdown_data = fetchingCompaniesAndLoads('35.161.234.96', 9991, 1024, 'get_company_current_load_numbers',
-                                                      'company_email', request.session['name'])
+    if request.session['role'] == "company":
+        if request.is_ajax() or request.method == 'POST' and request.session['role'] == "company":
+            
+            dropdown_data = fetchingLoads(request , request.session['name'])
 
             return JsonResponse({'dropdown': dropdown_data})
 
 
 def statusReport(request):
     # fetching loads of a company .
-    if request.is_ajax() or request.method == 'POST' and request.session['userStatus'] == "login_company":
-        dropdown_data = fetchingCompaniesAndLoads('34.213.95.106', 9991, 1024, 'get_company_current_load_numbers',
-                                                  'company_email', request.POST['company_email'])
+    if request.is_ajax() or request.method == 'POST' and request.session['role'] == "super_admin":
+        dropdown_data = fetchingLoads(request , request.POST['company_email'])
         request.session['company_email'] = request.POST['company_email']
         return JsonResponse({'dropdown': dropdown_data})
     elif request.method == "GET":
-        dropdown_data = fetchingCompaniesAndLoads('34.213.95.106', 9991, 1024, 'get_all_companies_names',
-                                                  'email', 'hassan.farrukh@casadetech.com')
+        dropdown_data = fetchingCompanies(request)
         return render(request, 'main/allStatusReports.html', {"dropdown": dropdown_data})
 
 
 def generatingReport(request):
     result = fetchingLatLong(request)
-    output = creatingOutputFile(ftp_companyLogin, request, result.get('location_lat'),
-                                result.get('location_long'),  str(request.POST['file_name']))
-    # return HttpResponse(ftp_companyLogin.getwelcome())
-    return HttpResponse(output)
+    # output = creatingOutputFile(ftp_companyLogin, request, result.get('location_lat'),
+    #                             result.get('location_long'),  str(request.POST['file_name']))
+    # # return HttpResponse(ftp_companyLogin.getwelcome())
+    return HttpResponse(result)
 
 
 def establishingConnection(request):
+                                                   
     global ftp_companyLogin, accountDetail
-    if(request.session['userStatus'] == "login_user"):
+    if(request.session['role'] == "super_admin"):
         try:
             accountDetail = accountRegistration.objects.get(email=request.session['company_email'])
             if accountDetail:
@@ -230,7 +303,7 @@ def establishingConnection(request):
                 return JsonResponse({'result': "its connected !"})
         except Exception as e:
             ftp_companyLogin = "No Ftp Account is associated with it."
-    elif(request.session['userStatus'] == "login_company"):
+    elif(request.session['role'] == "company"):
         try:
             accountDetail = accountRegistration.objects.get(email=request.session['name'])
             if accountDetail:
@@ -239,32 +312,29 @@ def establishingConnection(request):
                 return JsonResponse({'result': "its connected !"})
         except Exception as e:
             ftp_companyLogin = "No Ftp Account is associated with it."
+            return HttpResponse(ftp_companyLogin)
 
 
 def fetchingLatLong(request):
-    TCP_IP = "34.213.95.106"
-    TCP_PORT = 9991
-    BUFFER_SIZE = 1024
-    data = {}
-    data['message_type'] = 'current_load_info'
-    data['id_device_load_record'] = str(request.POST['device_record'])
-    json_data = json.dumps(data)
-    MESSAGE = json_data
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((TCP_IP, TCP_PORT))
-    s.sendto(MESSAGE.encode(), (TCP_IP, TCP_PORT))
-    data = s.recv(BUFFER_SIZE)
-    s.close()
-    responseInstring = data.decode("utf-8")
-    json_acceptable_string = responseInstring.replace("'", "\"")
-    dictionary = json.loads(json_acceptable_string)
-    if (dictionary['status'] == "Success"):
-        lat = (dictionary["details"].get('location_lat'))
-        long = (dictionary["details"].get('location_long'))
-        return dictionary['details']
-    else:
-        return (dictionary['status'])
 
+    data = {'id_device_load_record': request.POST['device_record'] }
+
+    payload = json.dumps(data)
+    headers = {
+        'Content-Type': "application/json",
+        'Authorization': "Bearer "+request.session['token'],
+        'cache-control': "no-cache",
+       
+        }
+
+    response = requests.request("POST", url, data=payload, headers=headers)
+    if (python_dict.get("status", "empty") == "Success"):
+        python_dict =  json.loads(response.text)
+        return python_dict.get("details", "empty")
+    else: 
+        return  python_dict.get("status", "empty")
+
+   
 
 def logout(request):
     """ It is used to make use logout of their accout."""
@@ -310,17 +380,18 @@ def fetchingUserTilesData(request):
 def fetchingCompanyTilesData(request):
     try:
         accountDetail = accountRegistration.objects.get(email=request.session['name'])
+        
         thread_ftp_accounts = threading.Thread(
             target=company_FtpAccounts, args=(request, "ftpAccounts", accountDetail))
-        #
+
         thread_decrypted_files = threading.Thread(
-            target=company_files, args=(input_queue, accountDetail, "output"))
+            target=company_files, args=(request, accountDetail, "output"))
 
         thread_sucessful_files = threading.Thread(
-            target=company_files, args=(input_queue, accountDetail,  "sucessful"))
+            target=company_files, args=(request, accountDetail,  "sucessful"))
 
         thread_un_sucessful_files = threading.Thread(
-            target=company_files, args=(input_queue, accountDetail,  "notSucessful"))
+            target=company_files, args=(request, accountDetail,  "notSucessful"))
 
         thread_ftp_accounts.start()
         thread_decrypted_files.start()

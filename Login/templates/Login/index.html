@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login V3</title>
+	<title>COLDWHERE EDI LOGIN</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
@@ -30,8 +30,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-
+ 
 
 
 </head>
@@ -64,12 +63,7 @@
 						<span class="focus-input100" data-placeholder="&#xf191;"></span>
 					</div>
 
-					<div class="contact100-form-checkbox">
-						<input class="input-checkbox100" id="login-company" type="checkbox" name="option">
-						<label class="label-checkbox100" for="login-company">
-							Login as Company
-						</label>
-					</div>
+					
 
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn" id="login">
@@ -117,7 +111,7 @@ var checkingStatus = false ;
   document.getElementById('login-email').focus();
   document.getElementById('login-email').value = '';
   document.getElementById("login-password").disabled = true;
-  document.getElementById("login-company").disabled=true;
+  
   document.getElementById("login").disabled=true;
   }
   $('#login-email').on('keyup',function(){
@@ -134,19 +128,19 @@ var checkingStatus = false ;
 	// email is null , password entered , checkbox checked.
 		else if  ((email.length  == 0) && (password.length > 0) && (checkboxStatus)){
 			document.getElementById("login-password").disabled = false;
-			document.getElementById("login-company").disabled=false;
+			
 			 document.getElementById("login").disabled=true;
 		}
 		// email is null , password entered , checkbox not checked.
 		else if  ((email.length  == 0) && (password.length > 0) && (!checkboxStatus)){
 			document.getElementById("login-password").disabled = false;
-			document.getElementById("login-company").disabled=true;
+			
 			 document.getElementById("login").disabled=true;
 		}
 		 // email null , password null ,
 		else if  ((email.length  == 0) && (password.length ==  0)){
 			document.getElementById("login-password").disabled = true;
-			document.getElementById("login-company").disabled=true;
+			
 			 document.getElementById("login").disabled=true;
 		}
  });
@@ -155,11 +149,11 @@ var checkingStatus = false ;
         var password = $(this).val();
 		var email = $("#login-email"). val();
         if ((password.length >0) && (email.length >0)) {
-		  document.getElementById("login-company").disabled=false;
+		
 		  document.getElementById("login").disabled=false;
 		}
 		else  if ((password.length == 0) ){
-		document.getElementById("login-company").disabled=true;
+	
 		 document.getElementById("login").disabled=true;
 		}
 

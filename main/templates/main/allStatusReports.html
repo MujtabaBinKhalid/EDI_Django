@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dark Bootstrap Admin by Bootstrapious.com</title>
+    <title>ColdWhere-EDI</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
@@ -29,7 +29,7 @@
 
         .block{
 
- margin-top:112px;
+ margin-top:12px;
  }
  </style>
 </head>
@@ -92,7 +92,7 @@
                         <div class="col-lg-8 offset-lg-2">
                             <div class="block">
                                 <div class="block-body">
-                                    <!-- <form method = "POST" action = "{% url 'status_report:generating_report' %}"> -->
+                                  
                                     <form>
                                         {% csrf_token %}
                                         <div class="form-group">
@@ -157,7 +157,7 @@
     disablingFields(["activeloads","filepath", "filename"])
     $('#comapnyname').change(function () {
         document.getElementById("activeloads").disabled = true;
-        disablingEmptyFields(["filepath","filename"]);
+        disablingEmptyFields(["filepath","filename", "status"]);
         var select = document.getElementById("activeloads");
         console.log (select.length)
         if (select.length > 0){
@@ -179,7 +179,7 @@
          disablingEmptyFields(["filepath","filename"]);
      selectVal = $('#activeloads').val();
           if (selectVal != "selectedvalue"){
-            document.getElementById("filepath").disabled = false;
+           
             connecting_ftpAccount()
         }
           else
@@ -201,6 +201,12 @@ function connecting_ftpAccount(){
         },
         success: function(response) {
             console.log(response)
+            if( response !== "No Ftp Account is associated with it."){
+                document.getElementById("filepath").disabled = false;
+            }
+            else {
+                alert ("Sorry , You dont have any FTP Account associated with this company")
+            }
         }
 }) // ajax call ends
 }
@@ -216,7 +222,7 @@ function generatingReport(){
             "file_name":$("#filename").val(),
         },
         success: function(response) {
-            console.log(response)
+            console.log("response")
             alert("Sucessful")
         },
         error: function(jqXHR, textStatus, errorThrown){

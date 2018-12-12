@@ -7,7 +7,8 @@ import schedule
 import time
 import glob
 import datetime
-
+import requests
+from ast import literal_eval
 
 def index(request):
     """ If the request is get it will return a login form , other wise it send a tcp login request to server. """
@@ -23,47 +24,44 @@ def index(request):
             loginStatus = request.POST['option']
             request.session['userStatus'] = "login_company"
             response = "login_company"
-            responseValue = authentication(request, "35.161.234.96", 9991, 1024, "login_company")
+            responseValue = authentication(request)
         except Exception as e:
             request.session['userStatus'] = "login_user"
             response = "login_user"
-            responseValue = authentication(request, "35.161.234.96", 9991, 1024, "login_user")
+            python_dict = authentication(request)
 
-        if(responseValue == "Success"):
+        if(python_dict.get("access_token", "empty") != "empty"):
+            
             request.session['name'] = request.POST['username']
-            httpresponse = HttpResponse(responseValue)
-            settingCookie(request.POST['username'], httpresponse)
+            request.session['token'] = python_dict.get("access_token", "empty")
+            # httpresponse = HttpResponse(python_dict)
+            # settingCookie("user_email",request.POST['username'], httpresponse)
+            # settingCookie("token",(python_dict.get("access_token", "empty"), httpresponse)
             # set_cookie(httpresponse, "email_user", request.POST['username'])
             return redirect("main:index")
         else:
-            return render(request, 'Login/index.html', {"error": "login credentials are not valid"})
+           
+             return render(request, 'Login/index.html', {"error": "login credentials are not valid"})
 
 
-def authentication(request, ip_address, port_number, bufferSize, messageType):
-    """ It is used to authenticate the user/company and returns the request status. """
-    data = {}
-    TCP_IP = ip_address
-    TCP_PORT = port_number
-    BUFFER_SIZE = bufferSize
-    data['message_type'] = messageType
-    data['email'] = request.POST['username']
-    data['password'] = request.POST['pass']
-    json_data = json.dumps(data)
-    MESSAGE = json_data
-    tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_socket.connect((TCP_IP, TCP_PORT))
-    tcp_socket.sendto(MESSAGE.encode(), (TCP_IP, TCP_PORT))
-    data = tcp_socket.recv(BUFFER_SIZE)
-    tcp_socket.close()
-    responseInstring = data.decode("utf-8")
-    json_acceptable_string = responseInstring.replace("'", "\"")
-    dictionary = json.loads(json_acceptable_string)
-    return dictionary["status"]
+def authentication(request):
+    # It is used to authenticate the user/company and returns the request status.
+    url = "https://api.coldwhere.com/oauth/token"
+    username= request.POST['username']
+    password = request.POST['pass']
+    payload = "grant_type=password&username=" + username + "&password=" + password + "&client_id=spring-security-oauth2-read-write-client&undefined="
+    headers = {
+        'Content-Type': "application/x-www-form-urlencoded",
+        'Authorization': "Basic c3ByaW5nLXNlY3VyaXR5LW9hdXRoMi1yZWFkLXdyaXRlLWNsaWVudDpzcHJpbmctc2VjdXJpdHktb2F1dGgyLXJlYWQtd3JpdGUtY2xpZW50LXBhc3N3b3JkMTIzNA==",
+        'cache-control': "no-cache",
+        }
+    response = requests.request("POST", url, data=payload, headers=headers)
+    return  literal_eval(response.text)
+    
 
-
-def settingCookie(request, response):
+def settingCookie(cookieName,request, response):
     """ Setting the cookie to store the email of the login id and then use it to fetch all comapnies."""
-    response.set_cookie("user_email", request)
+    response.set_cookie(cookieName, request)
 
 
 def set_cookie(response, key, value, days_expire=7):

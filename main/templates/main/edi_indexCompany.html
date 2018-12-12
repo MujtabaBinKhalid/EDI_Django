@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Dark Bootstrap Admin by Bootstrapious.com</title>
+  <title>ColdWhere-EDI</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
@@ -102,7 +102,7 @@
                 <div class="statistic-block block">
                   <div class="progress-details d-flex align-items-end justify-content-between">
                     <div class="title">
-                      <div class="icon"><i class="icon-user-1"></i></div><strong>Total FTP Accounts</strong>
+                      <div class="icon"><i class="icon-user-1"></i></div><strong> FTP Accounts</strong>
                     </div>
                     <div class="number dashtext-1">{{tiles_data.ftp_accounts}}</div>
                   </div>
@@ -115,7 +115,7 @@
                 <div class="statistic-block block">
                   <div class="progress-details d-flex align-items-end justify-content-between">
                     <div class="title">
-                      <div class="icon"><i class="icon-contract"></i></div><strong> Total Files Decyrpted </strong>
+                      <div class="icon"><i class="icon-contract"></i></div><strong>  Files Decyrpted </strong>
                     </div>
                     <div class="number dashtext-2">{{tiles_data.decrypted_files}}</div>
                   </div>
@@ -128,7 +128,7 @@
                 <div class="statistic-block block">
                   <div class="progress-details d-flex align-items-end justify-content-between">
                     <div class="title">
-                      <div class="icon"><i class="icon-paper-and-pencil"></i></div><strong>Total Sucessful Files</strong>
+                      <div class="icon"><i class="icon-paper-and-pencil"></i></div><strong> Sucessful Files</strong>
                     </div>
                     <div class="number dashtext-3">{{tiles_data.sucessful_files}}</div>
                   </div>
@@ -141,7 +141,7 @@
                 <div class="statistic-block block">
                   <div class="progress-details d-flex align-items-end justify-content-between">
                     <div class="title">
-                      <div class="icon"><i class="icon-writing-whiteboard"></i></div><strong> Total Unsucessful Files</strong>
+                      <div class="icon"><i class="icon-writing-whiteboard"></i></div><strong>  Unsucessful Files</strong>
                     </div>
                     <div class="number dashtext-4">{{tiles_data.unSucessful_files}}</div>
                   </div>
@@ -227,7 +227,7 @@
 
        <script>
        $( document ).ready(function() {
-       disablingFields(["activeloads","filepath", "filename"])
+       disablingFields(["filepath", "filename"])
      populatingDropdowns()
 
     // keeping track of the other dropdown.

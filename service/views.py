@@ -70,7 +70,6 @@ def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
     sddate = readingFile.split("*")[83]+" "+readingFile.split("*")[85]
     receiverNumber = readingFile.split('*')[90]
 
-    data['message_type'] = 'create_load'
     data['commodities'] = commodity
     data['weight'] = float(weight)
     data['mc_number'] = mcnumber
@@ -102,27 +101,25 @@ def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
 
 
 def sendingData(accountDetails, data, filepath, fileName):
-    TCP_IP = '35.161.234.96'
-    TCP_PORT = 9991
-    BUFFER_SIZE = 1024
-    json_data = json.dumps(data)
-    MESSAGE = json_data
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((TCP_IP, TCP_PORT))
-    s.sendto(MESSAGE.encode(), (TCP_IP, TCP_PORT))
-    data = s.recv(BUFFER_SIZE)
-    s.close()
+   url = "https://api.coldwhere.com/load/companyloadnumbers"
+   payload = json.dumps(data)
+   headers = {
+    'Content-Type': "application/json",
+    'Authorization': "Bearer "+request.session['token'],
+    'cache-control': "no-cache",
+   
+    }
 
-    responseInstring = data.decode("utf-8")
-    json_acceptable_string = responseInstring.replace("'", "\"")
-    dictionary = json.loads(json_acceptable_string)
+    response = requests.request("POST", url, data=payload, headers=headers)
 
-    if(dictionary["status"] == "Success"):
+    python_dict =  json.loads(response.text)
+    if (python_dict.get("status", "empty") == "Success"):
         movingCurrentInputFile(filepath, fileName, "sucessful")
+        creatingDirectories(filepath, "notSucessful")
         outputFile(fileName)
-        print(accountDetails.output_path)
     else:
         movingCurrentInputFile(filepath, fileName, "notSucessful")
+        creatingDirectories(filepath, "sucessful")
         outputFile(fileName, accountDetails)
 
 
@@ -133,6 +130,12 @@ def movingCurrentInputFile(filePath, fileName, directoryName):
     else:
         ftp.mkd(inputDirectory)
         ftp.rename(filePath+"/"+fileName+".edi", inputDirectory + "/"+fileName+".edi")
+
+
+def creatingDirectories(filePath, fileName, directoryName):
+    inputDirectory = filePath+"/"+directoryName
+    if not directoryName in ftp.nlst(filePath):
+        ftp.mkd(inputDirectory)
 
 
 def outputFile(filename, account):
