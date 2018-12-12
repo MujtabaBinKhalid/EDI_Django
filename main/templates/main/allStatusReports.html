@@ -31,6 +31,16 @@
 
  margin-top:12px;
  }
+
+#comapnyname option {
+background: #555555;
+}
+
+#activeloads option {
+background: #555555;
+}
+
+
  </style>
 </head>
 
@@ -154,10 +164,10 @@
     <script src="{% static  'main/assets/js/front.js'  %}"></script>
     <script>
     $( document ).ready(function() {
-    disablingFields(["activeloads","filepath", "filename"])
+    disablingFields(["activeloads","filepath", "filename","status"])
     $('#comapnyname').change(function () {
         document.getElementById("activeloads").disabled = true;
-        disablingEmptyFields(["filepath","filename", "status"]);
+        disablingEmptyFields(["filepath","filename"]);
         var select = document.getElementById("activeloads");
         console.log (select.length)
         if (select.length > 0){
@@ -207,7 +217,12 @@ function connecting_ftpAccount(){
             else {
                 alert ("Sorry , You dont have any FTP Account associated with this company")
             }
-        }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+           alert("Sorry , You dont have any FTP Account associated with this company")
+}
+
+        
 }) // ajax call ends
 }
 // generating report

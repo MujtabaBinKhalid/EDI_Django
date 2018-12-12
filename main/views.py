@@ -312,7 +312,7 @@ def establishingConnection(request):
                 return JsonResponse({'result': "its connected !"})
         except Exception as e:
             ftp_companyLogin = "No Ftp Account is associated with it."
-            return HttpResponse(ftp_companyLogin)
+            return HttpResponse("ftp_companyLogin")
 
 
 def fetchingLatLong(request):
