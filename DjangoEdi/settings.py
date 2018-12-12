@@ -15,7 +15,7 @@ SECRET_KEY = '%ak4hl@rc5-4d#f8+f=@*mc090ogw4feg3f8k-ukh@#hd0^nsn'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['54.245.173.223', '127.0.0.1' , "localhost"]
+ALLOWED_HOSTS = ['54.245.173.223', '127.0.0.1' , "localhost"  , "edi.coldwhere.com"]
 
 
 # Application definition
