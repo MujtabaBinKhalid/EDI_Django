@@ -237,11 +237,14 @@ background: #555555;
 
                            },
                            success: function(response) {
-                            //   makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
                             swal("FTP Account!", "Company FTP Account added", "success")
+                            makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
+                          
                            },
                            error: function(jqXHR, textStatus, errorThrown){
                             swal("Good job!", "Company FTP Account added", "success")
+                            makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
+                          
 
                             
                   }

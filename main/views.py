@@ -210,18 +210,13 @@ def index(request):
             
             if (response == "noerror"):
                 tiles_data = {
-                    # "alive_connections": request.session["activeConnection"],
-                    # "connected_connections": request.session["connectedConnection"],
-                    # "decrypted_files": request.session["decryptedFiles"],
-                    # "sucessful_files": request.session["sucessfulFiles"],
-                    # "accounts_detail": accountRegistration.objects.all(),
-                    # "accounts_count": accountRegistration.objects.count()
-                    "alive_connections": "0",
-                    "connected_connections": "0",
-                    "decrypted_files": "0",
-                    "sucessful_files": "0",
-                    "accounts_detail": null,
+                    "alive_connections": request.session["activeConnection"],
+                    "connected_connections": request.session["connectedConnection"],
+                    "decrypted_files": request.session["decryptedFiles"],
+                    "sucessful_files": request.session["sucessfulFiles"],
+                    "accounts_detail": accountRegistration.objects.all(),
                     "accounts_count": accountRegistration.objects.count()
+                   
                 }
             elif(response == "error"):
                 tiles_data = {
