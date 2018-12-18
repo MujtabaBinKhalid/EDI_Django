@@ -176,9 +176,9 @@ def index(request):
     # """ Index page, after login """
 
     if request.method == "GET":
-
+      try:   
         request.session['role'] = fetchingStatus(request)
-    #  try:
+    
         if (request.session['role'] == "company"):
            
             response = fetchingCompanyTilesData(request)
@@ -224,9 +224,8 @@ def index(request):
                 }
 
             return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data})
-    #  except Exception as e:
-         
-    #     return render(request, 'Login/index.html')
+      except Exception as e:
+            return render(request, 'Login/index.html')
    
 
 def accountCreation(request):
@@ -285,10 +284,11 @@ def statusReport(request):
 
 def generatingReport(request):
     result = fetchingLatLong(request)
-    # output = creatingOutputFile(ftp_companyLogin, request, result.get('location_lat'),
-    #                             result.get('location_long'),  str(request.POST['file_name']))
-    # # return HttpResponse(ftp_companyLogin.getwelcome())
-    return HttpResponse(result)
+    
+    output = creatingOutputFile(ftp_companyLogin, request, result.get('location_lat'),
+                                result.get('location_long'),  str(request.POST['file_name']))
+   # return HttpResponse(ftp_companyLogin.getwelcome())
+    return HttpResponse(output)
 
 
 def establishingConnection(request):
@@ -316,20 +316,21 @@ def establishingConnection(request):
 
 
 def fetchingLatLong(request):
-
+    url = "https://api.coldwhere.com/load/minloadinfo"
     data = {'id_device_load_record': request.POST['device_record'] }
-
+    
     payload = json.dumps(data)
+   
     headers = {
-        'Content-Type': "application/json",
-        'Authorization': "Bearer "+request.session['token'],
-        'cache-control': "no-cache",
-       
-        }
+    'Content-Type': "application/json",
+    'Authorization': "Bearer e67113da-e0e7-4be2-8f2f-3c2e718fe8ad",
+    'cache-control': "no-cache",
+    'Postman-Token': "215c527d-fdc1-4bad-aaeb-fff9792c4e36"
+    }
 
     response = requests.request("POST", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
     if (python_dict.get("status", "empty") == "Success"):
-        python_dict =  json.loads(response.text)
         return python_dict.get("details", "empty")
     else: 
         return  python_dict.get("status", "empty")
@@ -406,7 +407,7 @@ def fetchingCompanyTilesData(request):
 
 
 def creatingOutputFile(ftp_companyLogin, request, lat, long, filename):
-    # ftp_companyLogin.cwd(request.POST['file_path'])
+    ftp_companyLogin.cwd(request.POST['file_path'])
     stautusMessage = """ISA*00* *00* *02*SCAC *02*RBINTEST
         *100819*1851*U*00401*100110046*0*P*:
         GS*QM*SCAC*RBINTEST*20100819*1851*214060250*X*004010
