@@ -55,8 +55,6 @@ def fetchingLoads(request , companyEmail):
         return python_dict.get("details", "empty")
      
 	
-
-
 def activeConnections(request, session_name):
 
     active_connections = accountRegistration.objects.count()
@@ -146,7 +144,9 @@ def company_files(request, accountDetail, folder):
             folderpath = accountDetail.input_path + "/notSucessful"
 
         files = ftp.nlst(folderpath)
-        request.session[folder] = len(files) - 2
+        files.remove(".")
+        files.remove("..")
+        request.session[folder] = len(files) 
         output_files = []
         for file in files:
             output_files.append(file)
@@ -252,7 +252,7 @@ def accountCreation(request):
         return HttpResponse(request.POST['passwordOut'])
         
     elif request.method == "GET":
-        #try:
+        try:
             sessionData = request.session['name']
             if (request.session['role'] == "company"):
                 return render(request, 'main/edi_registration.html', {'cookie_email':  request.COOKIES.get('user_email')})
@@ -262,7 +262,7 @@ def accountCreation(request):
                 dropdown_data = fetchingCompanies(request)
                 return render(request, 'main/edi_registration_SuperUser.html', {"dropdown": dropdown_data})
 
-        #except Exception as e:
+        except Exception as e:
             return render(request, 'Login/index.html')
 
 
