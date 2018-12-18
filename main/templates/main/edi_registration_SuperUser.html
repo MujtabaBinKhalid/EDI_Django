@@ -92,7 +92,7 @@ background: #555555;
               <div class="col-lg-8 offset-lg-2">
                 <div class="block">
                   <div class="block-body">
-                    <form><div class="form-group">
+                    <form name = "submitting-form"><div class="form-group">
                         <label class="form-control-label" for="comapnyname">Company Name</label>
                         <div class="input-group-prepend">
                             <select name="comapnyname"  id = "comapnyname" class="form-control col-lg-12">
@@ -237,13 +237,18 @@ background: #555555;
 
                            },
                            success: function(response) {
+                            var full_form = document.getElementsByName('submitting-form')[0];
+                            full_form.reset();
+
                             swal("FTP Account!", "Company FTP Account added", "success")
-                            makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
+                            
                           
                            },
                            error: function(jqXHR, textStatus, errorThrown){
+                            var full_form = document.getElementsByName('submitting-form')[0];
+                            full_form.reset();
+
                             swal("Good job!", "Company FTP Account added", "success")
-                            makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
                           
 
                             
