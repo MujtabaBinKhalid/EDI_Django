@@ -84,8 +84,10 @@ def decryptedFiles(request, session_name,  accounts):
         ftp = ftplib.FTP(account.ipHost, account.userName, account.password)
         folderpath = account.output_path
         decrypted_files = ftp.nlst(folderpath)
+        decrypted_files.remove(".")
+        decrypted_files.remove("..")
         decrypted_files_number = decrypted_files_number + len(decrypted_files)
-    request.session[session_name] = decrypted_files_number
+    request.session[session_name] = decrypted_files_number 
 
 
 def sucessfulFiles(request, session_name,  accounts):
@@ -97,9 +99,11 @@ def sucessfulFiles(request, session_name,  accounts):
         ftp = ftplib.FTP(account.ipHost, account.userName, account.password)
         folderpath = account.input_path + "/sucessful"
         sucessful_files = ftp.nlst(folderpath)
+        sucessful_files.remove(".")
+        sucessful_files.remove("..")
         sucessful_files_number = sucessful_files_number + len(sucessful_files)
-    request.session[session_name] = sucessful_files_number
-
+    request.session[session_name] = sucessful_files_number 
+   
 
 def company_FtpAccounts(request, session_name, accountDetail):
     try:
@@ -142,7 +146,7 @@ def company_files(request, accountDetail, folder):
             folderpath = accountDetail.input_path + "/notSucessful"
 
         files = ftp.nlst(folderpath)
-        request.session[folder] = len(files)
+        request.session[folder] = len(files) - 2
         output_files = []
         for file in files:
             output_files.append(file)
@@ -188,8 +192,7 @@ def index(request):
                 comapny_tiles_data = {
                     "ftp_accounts": request.session["ftpAccounts"],
                     "decrypted_files": request.session["output"],
-                    # "sucessful_files": request.session["sucessful"],
-                    "sucessful_files": "0",
+                    "sucessful_files": request.session["sucessful"],
                     "unSucessful_files": request.session["notSucessful"],
                 }
             elif(response == "error"):
@@ -204,6 +207,7 @@ def index(request):
         elif(request.session['role'] == "super_admin"):
              
             response = fetchingUserTilesData(request)
+            
             if (response == "noerror"):
                 tiles_data = {
                     "alive_connections": request.session["activeConnection"],
@@ -354,6 +358,8 @@ def is_connected(ftp_conn):
 def fetchingUserTilesData(request):
     try:
         accounts = accountRegistration.objects.all()
+        
+      
         thread_activeConnection = threading.Thread(
             target=activeConnections, args=(request, "activeConnection"))
         thread_connectedConnection = threading.Thread(
@@ -381,7 +387,9 @@ def fetchingUserTilesData(request):
 def fetchingCompanyTilesData(request):
     try:
         accountDetail = accountRegistration.objects.get(email=request.session['name'])
-        
+        # company_files(request, accountDetail,  "notSucessful")
+        # return request.session["notSucessful"]
+
         thread_ftp_accounts = threading.Thread(
             target=company_FtpAccounts, args=(request, "ftpAccounts", accountDetail))
 
@@ -406,14 +414,14 @@ def fetchingCompanyTilesData(request):
         return "error"
 
 
-def creatingOutputFile(ftp_companyLogin, request, lat, long, filename):
+def creatingOutputFile(ftp_companyLogin, request, lat, longitude, filename):
     ftp_companyLogin.cwd(request.POST['file_path'])
     stautusMessage = """ISA*00* *00* *02*SCAC *02*RBINTEST
         *100819*1851*U*00401*100110046*0*P*:
         GS*QM*SCAC*RBINTEST*20100819*1851*214060250*X*004010
         ST*214*0001
         B10*3766*9924017*SCAC
-        MS1***""" + "lat"+" " + "long" + """*
+        MS1***""" + lat +" " + longitude + """*
         SE*10*0002
         GE*2*214060250
         IEA*1*100110046"""
