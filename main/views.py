@@ -213,6 +213,7 @@ def index(request):
                     "alive_connections": request.session["activeConnection"],
                     "connected_connections": request.session["connectedConnection"],
                     "decrypted_files": request.session["decryptedFiles"],
+                    "decrypted_files": "0",
                     "sucessful_files": request.session["sucessfulFiles"],
                     "accounts_detail": accountRegistration.objects.all(),
                     "accounts_count": accountRegistration.objects.count()
