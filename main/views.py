@@ -250,8 +250,9 @@ def accountCreation(request):
             edi_account.save()
 
         return HttpResponse(request.POST['passwordOut'])
+        
     elif request.method == "GET":
-        try:
+        #try:
             sessionData = request.session['name']
             if (request.session['role'] == "company"):
                 return render(request, 'main/edi_registration.html', {'cookie_email':  request.COOKIES.get('user_email')})
@@ -261,7 +262,7 @@ def accountCreation(request):
                 dropdown_data = fetchingCompanies(request)
                 return render(request, 'main/edi_registration_SuperUser.html', {"dropdown": dropdown_data})
 
-        except Exception as e:
+        #except Exception as e:
             return render(request, 'Login/index.html')
 
 

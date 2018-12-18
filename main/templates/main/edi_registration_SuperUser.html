@@ -174,6 +174,7 @@ background: #555555;
     <script src="{% static  'main/assets/vendor/jquery-validation/jquery.validate.min.js'  %}"></script>
     <script src="{% static  'main/assets/js/charts-home.js'  %}"></script>
     <script src="{% static  'main/assets/js/front.js'  %}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<script>
 	var checkboxStatus = false ;
     $( document ).ready(function() {
@@ -237,11 +238,12 @@ background: #555555;
                            },
                            success: function(response) {
                             //   makingTextFieldEmpty(["IPhostOut", "userNameout", "passwordOut", "password", "userName", "inputPath", "outputPath", "Iphost"]);
-                               alert("data inserted !")
+                            swal("FTP Account!", "Company FTP Account added", "success")
                            },
                            error: function(jqXHR, textStatus, errorThrown){
+                            swal("Good job!", "Company FTP Account added", "success")
 
-                              alert("data inserted !!!")
+                            
                   }
 
                        })

@@ -36,9 +36,10 @@
 </head>
 <body style="background-color:#22252a;">
 	{% if error %}
-	<div class="alert alert-danger">
-<strong>In Correct Credentials try again!</strong>
-</div>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+		<script>
+		swal("Authentication", "Invalid Credentials", "error");
+		</script>
 		{% endif %}
 	<div class="limiter" >
 		<div class="container-login100" >
@@ -96,6 +97,7 @@
 	<script src="{% static  'Login/assets/vendor/countdowntime/countdowntime.js'  %}"></script>
 <!--===============================================================================================-->
 	<script src="{% static  'Login/assets/js/main.js'  %}"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
 var checkingStatus = false ;
     $( document ).ready(function() {
