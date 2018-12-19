@@ -115,7 +115,7 @@ def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
 
 
 def sendingData(accountDetails, data, filepath, fileName):
-    url = "35.167.129.201:8081/load/companyloadnumbers"
+    url = "http://35.167.129.201:8081/load/companyloadnumbers"
       
     payload = json.dumps(data)
     headers = {

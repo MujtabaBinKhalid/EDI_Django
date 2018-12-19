@@ -40,7 +40,7 @@ def accountDetails(request):
     
 
 def fetchingCompanies(request):
-    url = "35.167.129.201:8081/company/allcompanies"
+    url = "http://35.167.129.201:8081/company/allcompanies"
 
     payload = ""
     headers = {
@@ -60,7 +60,7 @@ def fetchingCompanies(request):
     # it is used to fetch the loads of a specfic company
 def fetchingLoads(request , companyEmail):
 
-    url = "35.167.129.201:8081/load/companyloadnumbers"
+    url = "http://35.167.129.201:8081/load/companyloadnumbers"
 
     data = {'company_email': companyEmail }
     payload = json.dumps(data)
@@ -186,7 +186,7 @@ def company_files(request, accountDetail, folder):
         request.session[folder] = "0"
 
 def fetchingStatus(request):
-    url = "35.167.129.201:8081/user/me"
+    url = "http://35.167.129.201:8081/user/me"
 
     payload = ""
     headers = {
@@ -361,7 +361,7 @@ def establishingConnection(request):
 
 
 def fetchingLatLong(request):
-    url = "35.167.129.201:8081/load/minloadinfo"
+    url = "http://35.167.129.201:8081/load/minloadinfo"
     data = {'id_device_load_record': request.POST['device_record'] }
     
     payload = json.dumps(data)

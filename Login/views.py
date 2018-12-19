@@ -46,7 +46,7 @@ def index(request):
 
 def authentication(request):
     # It is used to authenticate the user/company and returns the request status.
-    url = "35.167.129.201:8081/oauth/token"
+    url = "http://35.167.129.201:8081/oauth/token"
     username= request.POST['username']
     password = request.POST['pass']
     payload = "grant_type=password&username=" + username + "&password=" + password + "&client_id=spring-security-oauth2-read-write-client&undefined="
