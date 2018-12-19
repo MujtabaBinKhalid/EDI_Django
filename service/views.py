@@ -12,7 +12,7 @@ from django.contrib.sessions.backends.db import SessionStore
 
 @background(schedule=300)
 def tcpRequest(): 
-    url = "http://localhost:3000/account/"
+    url = "http://54.245.173.223:3000/account/"
     payload = ""
     headers = {
         'cache-control': "no-cache",

@@ -15,7 +15,7 @@ import json
 # it is used to fetch all the companies on the reqyuest of the super admin .
 
 def countingAccounts(request):
-    url = "http://localhost:3000/account/countingCompanies"
+    url = "http://54.245.173.223:3000/account/countingCompanies"
     payload = ""
     headers = {
         'cache-control': "no-cache",
@@ -27,7 +27,7 @@ def countingAccounts(request):
 
 def accountDetails(request):
   
-    url = "http://localhost:3000/account/"
+    url = "http://54.245.173.223:3000/account/"
 
     payload = ""
     headers = {
@@ -81,7 +81,7 @@ def fetchingLoads(request , companyEmail):
      
 	
 def activeConnections(request, session_name):
-    url = "http://localhost:3000/account/countingCompanies"
+    url = "http://54.245.173.223:3000/account/countingCompanies"
     payload = ""
     headers = {
         'cache-control': "no-cache",
@@ -259,7 +259,7 @@ def index(request):
 def accountCreation(request):
     
     if request.is_ajax() or request.method == 'POST':
-        url = "http://localhost:3000/account/"
+        url = "http://54.245.173.223:3000/account/"
         headers = {
         'Content-Type': "application/json",
         'cache-control': "no-cache",
@@ -393,7 +393,7 @@ def is_connected(ftp_conn):
 
 def fetchingUserTilesData(request):
     try: 
-        url = "http://localhost:3000/account/"
+        url = "http://54.245.173.223:3000/account/"
         payload = ""
         headers = {
             'cache-control': "no-cache",
@@ -427,7 +427,7 @@ def fetchingUserTilesData(request):
 
 
 def fetchingAccountInfo(request , name):
-    url = "http://localhost:3000/account/fetchingCompany"
+    url = "http://54.245.173.223:3000/account/fetchingCompany"
     data = {'email': name }
     payload = json.dumps(data)
 
