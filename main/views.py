@@ -109,7 +109,6 @@ def ConnectedConnections(request, session_name,  accounts):
 
 
 def decryptedFiles(request, session_name,  accounts):
-    decrypted_files = []
     decrypted_files_number = 0
     for i in range(len(accounts.get("data", "empty"))):
         ftp = ftplib.FTP((accounts.get("data", "empty"))[i].get ("ipHost"),
@@ -117,16 +116,15 @@ def decryptedFiles(request, session_name,  accounts):
         (accounts.get("data", "empty"))[i].get ("password"))
 
         folderpath = (accounts.get("data", "empty"))[i].get ("output_path")
-        decrypted_files = ftp.nlst(folderpath)
-        decrypted_files.remove(".")
-        decrypted_files.remove("..")
-        decrypted_files_number = decrypted_files_number + len(decrypted_files)
+        files = checkingDirectory(ftp, folderpath)
+        # decrypted_files = ftp.nlst(folderpath)
+        # decrypted_files.remove(".")
+        # decrypted_files.remove("..")
+        decrypted_files_number = decrypted_files_number + files
     request.session[session_name] = decrypted_files_number 
 
 
 def sucessfulFiles(request, session_name,  accounts):
-
-    sucessful_files = []
     sucessful_files_number = 0
     try:
         for i in range(len(accounts.get("data", "empty"))):
@@ -134,17 +132,23 @@ def sucessfulFiles(request, session_name,  accounts):
             (accounts.get("data", "empty"))[i].get ("userName"), 
             (accounts.get("data", "empty"))[i].get ("password"))     
             folderpath = (accounts.get("data", "empty"))[i].get ("input_path") + "/sucessful"
-            sucessful_files = ftp.nlst(folderpath)
-            sucessful_files.remove(".")
-            sucessful_files.remove("..")
-            sucessful_files_number = sucessful_files_number + len(sucessful_files)
+            files = checkingDirectory(ftp, folderpath)
+            sucessful_files_number = sucessful_files_number + files
         request.session[session_name] = sucessful_files_number 
     except Exception as e:
         request.session[session_name] = "0"
     
+def checkingDirectory(ftp,folderpath):
 
-   
-
+    files = []
+    try:
+        files = ftp.nlst(folderpath)
+        files.remove(".")
+        files.remove("..")
+        return len(files)      
+    except Exception as e:
+        return 0
+    
 def company_FtpAccounts(request, session_name, accountDetail):
     try:
         if(accountDetail.get("ipHost", "empty") == accountDetail.get("ip_hostOut", "empty")):
@@ -204,7 +208,7 @@ def index(request):
     # """ Index page, after login """
 
     if request.method == "GET":
-      try:   
+      #try:   
         request.session['role'] = fetchingStatus(request)
     
         if (request.session['role'] == "company"):
@@ -235,7 +239,7 @@ def index(request):
                     "alive_connections": request.session["activeConnection"],
                     "connected_connections": request.session["connectedConnection"],
                     "decrypted_files": request.session["decryptedFiles"],
-                    "sucessful_files": request.session["sucessfulFiles"],
+                    "sucessful_files": request.session["sucessful_files"],
                     "accounts_detail": accountDetails(request),
                     "accounts_count":  countingAccounts(request)
                   
@@ -252,8 +256,8 @@ def index(request):
                 }
 
             return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data})
-      except Exception as e:
-            return render(request, 'Login/index.html')
+     # except Exception as e:
+      #      return render(request, 'Login/index.html')
    
 
 def accountCreation(request):
@@ -391,6 +395,8 @@ def is_connected(ftp_conn):
     return True
 
 
+
+
 def fetchingUserTilesData(request):
     try: 
         url = "http://54.245.173.223:3000/account/"
@@ -399,9 +405,7 @@ def fetchingUserTilesData(request):
             'cache-control': "no-cache",
             }
         response = requests.request("GET", url, data=payload, headers=headers)
-        accounts =  json.loads(response.text)
-         
-         
+        accounts =  json.loads(response.text)  
         thread_activeConnection = threading.Thread(
             target=activeConnections, args=(request, "activeConnection"))
         thread_connectedConnection = threading.Thread(
@@ -410,7 +414,7 @@ def fetchingUserTilesData(request):
         thread_decryptedfiles = threading.Thread(
             target=decryptedFiles, args=(request, "decryptedFiles", accounts,))
         thread_sucessfulfiles = threading.Thread(
-            target=sucessfulFiles, args=(request, "sucessfulFiles", accounts,))
+            target=sucessfulFiles, args=(request, "sucessful_files", accounts,))
 
         thread_activeConnection.start()
         thread_connectedConnection.start()
