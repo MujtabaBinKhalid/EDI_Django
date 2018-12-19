@@ -6,38 +6,52 @@ from django.shortcuts import render
 from main.models import accountRegistration
 from background_task import background
 from io import BytesIO
+import requests
+from django.contrib.sessions.backends.db import SessionStore
 
 
 @background(schedule=300)
-def tcpRequest():
-    accounts = accountRegistration.objects.all()
-    for account in accounts:
-        # print("translating files of account " + account.ipHost)
+def tcpRequest(): 
+    url = "http://localhost:3000/account/"
+    payload = ""
+    headers = {
+        'cache-control': "no-cache",
+        }
+    response = requests.request("GET", url, data=payload, headers=headers)
+    accounts =  json.loads(response.text)
+    for account in range(len(accounts.get("data", "empty"))):
         global host, ftp
+        ftp = ftplib.FTP((accounts.get("data", "empty"))[account].get ("ipHost"),
+        (accounts.get("data", "empty"))[account].get ("userName"), 
+        (accounts.get("data", "empty"))[account].get ("password"))
+        # print("translating files of account " + account.ipHost)
         byteReading = BytesIO()
 
-        ftp = ftplib.FTP(account.ipHost, account.userName, account.password)
-
+        
         files = []
-        innerDirectory = account.input_path
+        innerDirectory = (accounts.get("data", "empty"))[account].get ("input_path")
         files = ftp.nlst(innerDirectory)
         print(files)
         files.remove(".")
         files.remove("..")
         print("file array Ready!")
-        for file in files:
-            if (file == "notSucessful"):
+        for file_name in files:
+            if (file_name == "notSucessful"):
                 files.remove("notSucessful")
 
-            elif (file == "sucessful"):
+            elif (file_name == "sucessful"):
                 files.remove("sucessful")
 
-            elif(file.split('.')[1] == "edi"):
-                fileName = file.split('.')[0]
-                filepath = innerDirectory+"/"+file
+            elif(file_name.split('.')[1] == "edi"):
+                fileName = file_name.split('.')[0]
+                filepath = innerDirectory+"/"+file_name
                 ftp.retrbinary('RETR ' + filepath, byteReading.write)
                 readingFile = byteReading.getvalue().decode("utf-8")
-                #readingCurrentFile(account, readingFile, innerDirectory, fileName)
+                # print ((accounts.get("data", "empty"))[account])
+                # print (readingFile)
+                # print (innerDirectory)
+                # print (fileName)
+                readingCurrentFile((accounts.get("data", "empty"))[account], readingFile, innerDirectory, fileName)
 
 
 def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
@@ -102,10 +116,11 @@ def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
 
 def sendingData(accountDetails, data, filepath, fileName):
     url = "https://api.coldwhere.com/load/companyloadnumbers"
+      
     payload = json.dumps(data)
     headers = {
         'Content-Type': "application/json",
-        'Authorization': "Bearer "+request.session['token'],
+        'Authorization': "Bearer "+ generatingToken(),
         'cache-control': "no-cache",
     
         }
@@ -113,14 +128,15 @@ def sendingData(accountDetails, data, filepath, fileName):
     response = requests.request("POST", url, data=payload, headers=headers)
 
     python_dict =  json.loads(response.text)
+    print(python_dict)
     if (python_dict.get("status", "empty") == "Success"):
         movingCurrentInputFile(filepath, fileName, "sucessful")
         creatingDirectories(filepath, "notSucessful")
-        outputFile(fileName)
+        outputFile(fileName,accountDetails, "A")
     else:
         movingCurrentInputFile(filepath, fileName, "notSucessful")
         creatingDirectories(filepath, "sucessful")
-        outputFile(fileName, accountDetails)
+        outputFile(fileName, accountDetails, "R")
 
 
 def movingCurrentInputFile(filePath, fileName, directoryName):
@@ -132,22 +148,39 @@ def movingCurrentInputFile(filePath, fileName, directoryName):
         ftp.rename(filePath+"/"+fileName+".edi", inputDirectory + "/"+fileName+".edi")
 
 
-def creatingDirectories(filePath, fileName, directoryName):
+def creatingDirectories(filePath, directoryName):
     inputDirectory = filePath+"/"+directoryName
     if not directoryName in ftp.nlst(filePath):
         ftp.mkd(inputDirectory)
 
 
-def outputFile(filename, account):
-    ftp_out = ftplib.FTP(account.ip_hostOut, account.user_nameOut, account.passwordOut)
-    ftp_out.cwd(account.output_path)
-    output = io.BytesIO(b"""ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000003438*0*P*>
+def outputFile(filename, account, status):
+    ftp_out = ftplib.FTP(account.get("ip_hostOut"),account.get("user_nameOut"), account.get("passwordOut"))
+    ftp_out.cwd(account.get("output_path"))
+    outputMessage = """ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000003438*0*P*>
     GS*GF*4405197800*999999999*20111219*1742*000000003*X*004010
     ST*990*000000003
-    B1*XXXX*9999919860*20111218*A
+    B1*XXXX*9999919860*20111218*"""+ status + """
     N9*CN*9999919860
     SE*4*000000003
     GE*1*000000003
-    IEA*1*000000003""")
+    IEA*1*000000003"""
+    output = io.BytesIO(str.encode(outputMessage))
     ftp_out.storbinary('STOR ' + filename+".edi", output)
     print("output stored !")
+
+def generatingToken():
+    # It is used to authenticate the user/company and returns the request status.
+    url = "https://api.coldwhere.com/oauth/token"
+    username= "ftp@coldwhere.com"
+    password = "3tpfkLEZCobJgOJP9O96"
+    payload = "grant_type=password&username=" + username + "&password=" + password + "&client_id=spring-security-oauth2-read-write-client&undefined="
+    headers = {
+        'Content-Type': "application/x-www-form-urlencoded",
+        'Authorization': "Basic c3ByaW5nLXNlY3VyaXR5LW9hdXRoMi1yZWFkLXdyaXRlLWNsaWVudDpzcHJpbmctc2VjdXJpdHktb2F1dGgyLXJlYWQtd3JpdGUtY2xpZW50LXBhc3N3b3JkMTIzNA==",
+        'cache-control': "no-cache",
+        }
+    response = requests.request("POST", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
+    return  python_dict.get("access_token", "empty")
+    

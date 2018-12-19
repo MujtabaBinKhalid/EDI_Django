@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from main.models import accountRegistration
 import threading
 import queue
 import ftplib
@@ -14,6 +13,32 @@ import json
 
 
 # it is used to fetch all the companies on the reqyuest of the super admin .
+
+def countingAccounts(request):
+    url = "http://localhost:3000/account/countingCompanies"
+    payload = ""
+    headers = {
+        'cache-control': "no-cache",
+        }
+    response = requests.request("POST", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
+    return python_dict.get("dataCount", "empty")
+
+
+def accountDetails(request):
+  
+    url = "http://localhost:3000/account/"
+
+    payload = ""
+    headers = {
+        'cache-control': "no-cache",
+        }
+
+    response = requests.request("GET", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
+    return python_dict.get("data", "empty")     
+    
+
 def fetchingCompanies(request):
     url = "https://api.coldwhere.com/company/allcompanies"
 
@@ -56,18 +81,27 @@ def fetchingLoads(request , companyEmail):
      
 	
 def activeConnections(request, session_name):
+    url = "http://localhost:3000/account/countingCompanies"
+    payload = ""
+    headers = {
+        'cache-control': "no-cache",
+        }
 
-    active_connections = accountRegistration.objects.count()
-    request.session[session_name] = active_connections
+    response = requests.request("POST", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
+    request.session[session_name] = python_dict.get("dataCount", "empty")
 
+    
 
 def ConnectedConnections(request, session_name,  accounts):
 
     connected_connections = 0
-    for account in accounts:
+    for i in range(len(accounts.get("data", "empty"))):
         try:
-            ftp = ftplib.FTP(account.ipHost, account.userName, account.password)
-            if (is_connected):
+            ftp = ftplib.FTP((accounts.get("data", "empty"))[i].get ("ipHost"),
+            (accounts.get("data", "empty"))[i].get ("userName"), 
+            (accounts.get("data", "empty"))[i].get ("password"))
+            if  (is_connected):
                 connected_connections += 1
         except Exception as e:
             pass
@@ -75,12 +109,14 @@ def ConnectedConnections(request, session_name,  accounts):
 
 
 def decryptedFiles(request, session_name,  accounts):
-
     decrypted_files = []
     decrypted_files_number = 0
-    for account in accounts:
-        ftp = ftplib.FTP(account.ipHost, account.userName, account.password)
-        folderpath = account.output_path
+    for i in range(len(accounts.get("data", "empty"))):
+        ftp = ftplib.FTP((accounts.get("data", "empty"))[i].get ("ipHost"),
+        (accounts.get("data", "empty"))[i].get ("userName"), 
+        (accounts.get("data", "empty"))[i].get ("password"))
+
+        folderpath = (accounts.get("data", "empty"))[i].get ("output_path")
         decrypted_files = ftp.nlst(folderpath)
         decrypted_files.remove(".")
         decrypted_files.remove("..")
@@ -92,56 +128,44 @@ def sucessfulFiles(request, session_name,  accounts):
 
     sucessful_files = []
     sucessful_files_number = 0
-    accounts = accountRegistration.objects.all()
-    for account in accounts:
-        ftp = ftplib.FTP(account.ipHost, account.userName, account.password)
-        folderpath = account.input_path + "/sucessful"
-        sucessful_files = ftp.nlst(folderpath)
-        sucessful_files.remove(".")
-        sucessful_files.remove("..")
-        sucessful_files_number = sucessful_files_number + len(sucessful_files)
-    request.session[session_name] = sucessful_files_number 
+    try:
+        for i in range(len(accounts.get("data", "empty"))):
+            ftp = ftplib.FTP((accounts.get("data", "empty"))[i].get ("ipHost"),
+            (accounts.get("data", "empty"))[i].get ("userName"), 
+            (accounts.get("data", "empty"))[i].get ("password"))     
+            folderpath = (accounts.get("data", "empty"))[i].get ("input_path") + "/sucessful"
+            sucessful_files = ftp.nlst(folderpath)
+            sucessful_files.remove(".")
+            sucessful_files.remove("..")
+            sucessful_files_number = sucessful_files_number + len(sucessful_files)
+        request.session[session_name] = sucessful_files_number 
+    except Exception as e:
+        request.session[session_name] = "0"
+    
+
    
 
 def company_FtpAccounts(request, session_name, accountDetail):
     try:
-        if(accountDetail.ipHost == accountDetail.ip_hostOut):
+        if(accountDetail.get("ipHost", "empty") == accountDetail.get("ip_hostOut", "empty")):
             request.session[session_name] = "1"
-        elif(accountDetail.ipHost != accountDetail.ip_hostOut):
+        elif(accountDetail.get("ipHost", "empty") != accountDetail.get("ip_hostOut", "empty")):
             request.session[session_name] = "2"
     except Exception as e:
         request.session[session_name] = "0"
 
-# def companySucessfulFiles (request, accountDetail):
-#     try:
-#         ftp = ftplib.FTP(accountDetail.ipHost, accountDetail.userName,
-#                          accountDetail.password)
-
-     
-#         folderpath = accountDetail.input_path + "/sucessful"
-        
-
-#         files = ftp.nlst(folderpath)
-#         request.session["sucessful"] = len(files)
-#         return  request.session["sucessful"]
-
-       
-#     except Exception as e:
-#         request.session["sucessful"] = "0"   
-#         return  HttpResponse(request.session["sucessful"]) 
-
 
 def company_files(request, accountDetail, folder):
     try:
-        ftp = ftplib.FTP(accountDetail.ipHost, accountDetail.userName,
-                         accountDetail.password)
+        ftp = ftplib.FTP(accountDetail.get("ipHost", "empty"), accountDetail.get("userName", "empty"),
+                         accountDetail.get("password", "empty"))
 
         if (folder == "output"):
-            folderpath = accountDetail.output_path
+            folderpath = accountDetail.get("output_path", "empty")
         elif (folder == "sucessful"):
-            folderpath = accountDetail.input_path + "/sucessful"
+            folderpath = accountDetail.get("input_path", "empty") + "/sucessful"
         elif (folder == "notSucessful"):
-            folderpath = accountDetail.input_path + "/notSucessful"
+            folderpath = accountDetail.get("input_path", "empty") + "/notSucessful"
 
         files = ftp.nlst(folderpath)
         files.remove(".")
@@ -152,8 +176,8 @@ def company_files(request, accountDetail, folder):
             output_files.append(file)
 
         request.session["output_files"] = output_files
-        request.session["ftp_username"] = accountDetail.userName
-        request.session["output_path"] = accountDetail.output_path
+        request.session["ftp_username"] = accountDetail.get("userName", "empty")
+        request.session["output_path"] = accountDetail.get("output_path", "empty")
     except Exception as e:
         request.session[folder] = "0"
 
@@ -186,8 +210,6 @@ def index(request):
         if (request.session['role'] == "company"):
            
             response = fetchingCompanyTilesData(request)
-            
-
             if (response == "noerror"):
                 comapny_tiles_data = {
                     "ftp_accounts": request.session["ftpAccounts"],
@@ -214,8 +236,8 @@ def index(request):
                     "connected_connections": request.session["connectedConnection"],
                     "decrypted_files": request.session["decryptedFiles"],
                     "sucessful_files": request.session["sucessfulFiles"],
-                    "accounts_detail": accountRegistration.objects.all(),
-                    "accounts_count": accountRegistration.objects.count()
+                    "accounts_detail": accountDetails(request),
+                    "accounts_count":  countingAccounts(request)
                   
                    
                 }
@@ -226,7 +248,7 @@ def index(request):
                     "decrypted_files": "0",
                     "sucessful_files": "0",
                     "accounts_detail": null,
-                    "accounts_count": accountRegistration.objects.count()
+                    "accounts_count": countingAccounts(request)
                 }
 
             return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data})
@@ -235,23 +257,35 @@ def index(request):
    
 
 def accountCreation(request):
+    
     if request.is_ajax() or request.method == 'POST':
-        if(request.session['role'] == "company"):
-            edi_account = accountRegistration.objects.create(ipHost=request.POST['iphost'], userName=request.POST['username'],
-                                                             password=request.POST['password'], input_path=request.POST['inputpath'],
-                                                             output_path=request.POST['outputpath'], ip_hostOut=request.POST['iphostOut'],
-                                                             passwordOut=request.POST['passwordOut'],  user_nameOut=request.POST['usernameOut'],
-                                                             email=request.session['name'])
-            edi_account.save()
-        elif(request.session['role'] == "super_admin"):
-            edi_account = accountRegistration.objects.create(ipHost=request.POST['iphost'], userName=request.POST['username'],
-                                                             password=request.POST['password'], input_path=request.POST['inputpath'],
-                                                             output_path=request.POST['outputpath'], ip_hostOut=request.POST['iphostOut'],
-                                                             passwordOut=request.POST['passwordOut'],  user_nameOut=request.POST['usernameOut'],
-                                                             email=request.POST['email'])
-            edi_account.save()
+        url = "http://localhost:3000/account/"
+        headers = {
+        'Content-Type': "application/json",
+        'cache-control': "no-cache",
+        }
 
-        return HttpResponse(request.POST['passwordOut'])
+        if(request.session['role'] == "company"):
+            data = {"ipHost": request.POST['iphost'],"userName":request.POST['username'],"password":request.POST['password'],"email":request.session['name'],
+            "input_path":request.POST['inputpath'],"output_path":request.POST['outputpath'],
+            "ip_hostOut": request.POST['iphostOut'],
+            "user_nameOut":request.POST['usernameOut'],"passwordOut": request.POST['passwordOut']}
+
+         
+        elif(request.session['role'] == "super_admin"):
+            data = {"ipHost": request.POST['iphost'],"userName":request.POST['username'],"password":request.POST['password'],"email":request.POST['email'],
+            "input_path":request.POST['inputpath'],"output_path":request.POST['outputpath'],
+            "ip_hostOut": request.POST['iphostOut'],
+            "user_nameOut":request.POST['usernameOut'],"passwordOut": request.POST['passwordOut']}
+
+        
+        payload = json.dumps(data)
+        response = requests.request("POST", url, data=payload, headers=headers)
+        python_dict =  json.loads(response.text)
+
+        if (python_dict.get("status", "empty") == "Success"):
+            return HttpResponse(request.POST['passwordOut'])
+               
         
     elif request.method == "GET":
         try:
@@ -303,19 +337,19 @@ def establishingConnection(request):
     global ftp_companyLogin, accountDetail
     if(request.session['role'] == "super_admin"):
         try:
-            accountDetail = accountRegistration.objects.get(email=request.session['company_email'])
+            accountDetail = fetchingAccountInfo(request, request.session['company_email'])
             if accountDetail:
-                ftp_companyLogin = ftplib.FTP(
-                    accountDetail.ipHost, accountDetail.userName, accountDetail.password)
+                ftp_companyLogin = ftplib.FTP(accountDetail.get("ipHost", "empty"), accountDetail.get("userName", "empty"),
+                         accountDetail.get("password", "empty"))
                 return JsonResponse({'result': "its connected !"})
         except Exception as e:
             ftp_companyLogin = "No Ftp Account is associated with it."
     elif(request.session['role'] == "company"):
         try:
-            accountDetail = accountRegistration.objects.get(email=request.session['name'])
+            accountDetail = fetchingAccountInfo(request, request.session['name'])  
             if accountDetail:
-                ftp_companyLogin = ftplib.FTP(
-                    accountDetail.ipHost, accountDetail.userName, accountDetail.password)
+                ftp_companyLogin = ftplib.FTP(accountDetail.get("ipHost", "empty"), accountDetail.get("userName", "empty"),
+                         accountDetail.get("password", "empty"))
                 return JsonResponse({'result': "its connected !"})
         except Exception as e:
             ftp_companyLogin = "No Ftp Account is associated with it."
@@ -349,7 +383,6 @@ def logout(request):
     del request.session['name']
     return render(request, 'Login/index.html')
 
-
 def is_connected(ftp_conn):
     try:
         ftp_conn.retrlines('LIST')
@@ -359,10 +392,16 @@ def is_connected(ftp_conn):
 
 
 def fetchingUserTilesData(request):
-    try:
-        accounts = accountRegistration.objects.all()
-        
-      
+    try: 
+        url = "http://localhost:3000/account/"
+        payload = ""
+        headers = {
+            'cache-control': "no-cache",
+            }
+        response = requests.request("GET", url, data=payload, headers=headers)
+        accounts =  json.loads(response.text)
+         
+         
         thread_activeConnection = threading.Thread(
             target=activeConnections, args=(request, "activeConnection"))
         thread_connectedConnection = threading.Thread(
@@ -387,12 +426,24 @@ def fetchingUserTilesData(request):
         return "error"
 
 
+def fetchingAccountInfo(request , name):
+    url = "http://localhost:3000/account/fetchingCompany"
+    data = {'email': name }
+    payload = json.dumps(data)
+
+    headers = {
+    'Content-Type': "application/json",
+    'cache-control': "no-cache",
+    }
+
+    response = requests.request("POST", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
+    accountDetail = python_dict.get("data", "empty")
+    return accountDetail
+        
 def fetchingCompanyTilesData(request):
     try:
-        accountDetail = accountRegistration.objects.get(email=request.session['name'])
-        # company_files(request, accountDetail,  "notSucessful")
-        # return request.session["notSucessful"]
-
+        accountDetail = fetchingAccountInfo(request, request.session['name'])
         thread_ftp_accounts = threading.Thread(
             target=company_FtpAccounts, args=(request, "ftpAccounts", accountDetail))
 

@@ -162,6 +162,8 @@ background: #555555;
     <script src="{% static  'main/assets/vendor/jquery-validation/jquery.validate.min.js'  %}"></script>
     <script src="{% static  'main/assets/js/charts-home.js'  %}"></script>
     <script src="{% static  'main/assets/js/front.js'  %}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	
     <script>
     $( document ).ready(function() {
     disablingFields(["activeloads","filepath", "filename","status"])
@@ -215,11 +217,13 @@ function connecting_ftpAccount(){
                 document.getElementById("filepath").disabled = false;
             }
             else {
-                alert ("Sorry , You dont have any FTP Account associated with this company")
+                swal("FTP Account!", "You dont have any FTP Account associated with this company", "error")
+                         
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
-           alert("Sorry , You dont have any FTP Account associated with this company")
+            swal("FTP Account!", "You dont have any FTP Account associated with this company", "error")
+
 }
 
         
