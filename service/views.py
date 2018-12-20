@@ -10,7 +10,7 @@ import requests
 def tcpRequest(): 
     print("TCP-REQUEST")
     try:
-        url = "http://192.168.0.101:3000/account/"
+        url = "http://54.245.173.223:3000/account/"
         payload = ""
         headers = {
             'cache-control': "no-cache",
