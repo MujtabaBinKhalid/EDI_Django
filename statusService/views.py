@@ -1,64 +1,53 @@
 from django.shortcuts import render
-
 import json
 import io
 import ftplib
 from django.shortcuts import render
-from background_task import background
 from io import BytesIO
 import requests
 
-
-def fetchingPaths(email):
-    url = "http://localhost:3000/status/fetchingPath"    
-    data = {'email':email}
-    payload = json.dumps(data)
-    headers = {
-        'Content-Type': "application/json",
-        }
-
-    response = requests.request("POST", url, data=payload, headers=headers)
-    python_dict =  json.loads(response.text)
-    data = python_dict.get("data", "empty")
-    return data 
-
-@background(schedule=300)
+       
 def statusReports(): 
     print ("Pikabuu")
-    url = "http://54.245.173.223:3000/account/"
-    payload = ""
-    headers = {
-        'cache-control': "no-cache",
-        }
-    response = requests.request("GET", url, data=payload, headers=headers)
-    accounts =  json.loads(response.text)
-    for account in range(len(accounts.get("data", "empty"))):
-        global host, ftp, statusInputPath, statusOutputPath
-        ftp = ftplib.FTP((accounts.get("data", "empty"))[account].get ("ipHost"),
-        (accounts.get("data", "empty"))[account].get ("userName"), 
-        (accounts.get("data", "empty"))[account].get ("password"))
-        print("translating files of account ")
-        paths = fetchingPaths ((accounts.get("data", "empty"))[account].get ("email"))
-        statusInputPath = paths.get("input_path")
-        statusOutputPath = paths.get("output_path")
-        print (statusInputPath)
-        print (statusOutputPath)
-        byteReading = BytesIO()
+    try:
+        url = "http://192.168.0.101:3000/account/"
+        payload = ""
+        headers = {
+            'cache-control': "no-cache",
+            }
+        response = requests.request("GET", url, data=payload, headers=headers)
+        accounts =  json.loads(response.text)
+        for account in range(len(accounts.get("data", "empty"))):
+            global host, ftp, statusInputPath, statusOutputPath
+            ftp = ftplib.FTP((accounts.get("data", "empty"))[account].get ("ipHost"),
+            (accounts.get("data", "empty"))[account].get ("userName"), 
+            (accounts.get("data", "empty"))[account].get ("password"))
+            print("translating files of account ")
+            paths = fetchingPaths ((accounts.get("data", "empty"))[account].get ("email"))
+            if not (is_empty(paths)):
+                statusInputPath = paths.get("input_path")
+                statusOutputPath = paths.get("output_path")
+                print (statusInputPath)
+                print (statusOutputPath)
+                byteReading = BytesIO()
 
-        files = []
-        files = ftp.nlst(statusInputPath)
-        print(files)
-        files.remove(".")
-        files.remove("..")
-        for file_name in files:
-            if(file_name.split('.')[1] == "edi"):
-                fileName = file_name.split('.')[0]
-                filepath = statusInputPath+"/"+file_name
-                ftp.retrbinary('RETR ' + filepath, byteReading.write)
-                readingFile = byteReading.getvalue().decode("utf-8")
-                print (readingFile)
-                readingCurrentFile((accounts.get("data", "empty"))[account], readingFile, statusInputPath, fileName)
-
+                files = []
+                files = ftp.nlst(statusInputPath)
+                print(files)
+                files.remove(".")
+                files.remove("..")
+                for file_name in files:
+                    if(file_name.split('.')[1] == "edi"):
+                        fileName = file_name.split('.')[0]
+                        filepath = statusInputPath+"/"+file_name
+                        ftp.retrbinary('RETR ' + filepath, byteReading.write)
+                        readingFile = byteReading.getvalue().decode("utf-8")
+                        print (readingFile)
+                        readingCurrentFile((accounts.get("data", "empty"))[account], readingFile, statusInputPath, fileName)
+            else:
+                pass    
+    except requests.exceptions.ConnectionError:
+        print ("Connection refused")
 def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
     try: 
         id_device_load_record = readingFile.split('*')[2].split(":")[1]
@@ -120,5 +109,23 @@ def generatingToken():
     python_dict =  json.loads(response.text)
     return  python_dict.get("access_token", "empty")
     
-        
-        
+def fetchingPaths(email):
+    url = "http://localhost:3000/status/fetchingPath"    
+    data = {'email':email}
+    payload = json.dumps(data)
+    headers = {
+        'Content-Type': "application/json",
+        }
+
+    response = requests.request("POST", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
+    data = python_dict.get("data")
+    return data 
+    
+def is_empty(any_structure):
+    if any_structure:
+        print('Structure is not empty.')
+        return False
+    else:
+        print('Structure is empty.')
+        return True

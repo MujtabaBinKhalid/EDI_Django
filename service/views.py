@@ -2,54 +2,54 @@ import json
 import io
 import ftplib
 from django.shortcuts import render
-from background_task import background
+from statusService.views import statusReports
 from io import BytesIO
 import requests
 
 
-@background(schedule=300)
 def tcpRequest(): 
-    url = "http://54.245.173.223:3000/account/"
-    payload = ""
-    headers = {
-        'cache-control': "no-cache",
-        }
-    response = requests.request("GET", url, data=payload, headers=headers)
-    accounts =  json.loads(response.text)
-    for account in range(len(accounts.get("data", "empty"))):
-        global host, ftp
-        ftp = ftplib.FTP((accounts.get("data", "empty"))[account].get ("ipHost"),
-        (accounts.get("data", "empty"))[account].get ("userName"), 
-        (accounts.get("data", "empty"))[account].get ("password"))
-        # print("translating files of account " + account.ipHost)
-        byteReading = BytesIO()
+    print("TCP-REQUEST")
+    try:
+        url = "http://192.168.0.101:3000/account/"
+        payload = ""
+        headers = {
+            'cache-control': "no-cache",
+            }
+        response = requests.request("GET", url, data=payload, headers=headers)
+        accounts =  json.loads(response.text)
+        for account in range(len(accounts.get("data", "empty"))):
+            global host, ftp
+            ftp = ftplib.FTP((accounts.get("data", "empty"))[account].get ("ipHost"),
+            (accounts.get("data", "empty"))[account].get ("userName"), 
+            (accounts.get("data", "empty"))[account].get ("password"))
+            # print("translating files of account " + account.ipHost)
+            byteReading = BytesIO()            
+            files = []
+            innerDirectory = (accounts.get("data", "empty"))[account].get ("input_path")
+            files = ftp.nlst(innerDirectory)
+            print(files)
+            files.remove(".")
+            files.remove("..")
+            print("file array Ready!")
+            for file_name in files:
+                if (file_name == "notSucessful"):
+                    files.remove("notSucessful")
 
-        
-        files = []
-        innerDirectory = (accounts.get("data", "empty"))[account].get ("input_path")
-        files = ftp.nlst(innerDirectory)
-        print(files)
-        files.remove(".")
-        files.remove("..")
-        print("file array Ready!")
-        for file_name in files:
-            if (file_name == "notSucessful"):
-                files.remove("notSucessful")
+                elif (file_name == "sucessful"):
+                    files.remove("sucessful")
 
-            elif (file_name == "sucessful"):
-                files.remove("sucessful")
-
-            elif(file_name.split('.')[1] == "edi"):
-                fileName = file_name.split('.')[0]
-                filepath = innerDirectory+"/"+file_name
-                ftp.retrbinary('RETR ' + filepath, byteReading.write)
-                readingFile = byteReading.getvalue().decode("utf-8")
-                # print ((accounts.get("data", "empty"))[account])
-                # print (readingFile)
-                # print (innerDirectory)
-                # print (fileName)
-                readingCurrentFile((accounts.get("data", "empty"))[account], readingFile, innerDirectory, fileName)
-
+                elif(file_name.split('.')[1] == "edi"):
+                    fileName = file_name.split('.')[0]
+                    filepath = innerDirectory+"/"+file_name
+                    ftp.retrbinary('RETR ' + filepath, byteReading.write)
+                    readingFile = byteReading.getvalue().decode("utf-8")
+                    # print ((accounts.get("data", "empty"))[account])
+                    # print (readingFile)
+                    # print (innerDirectory)
+                    # print (fileName)
+                    readingCurrentFile((accounts.get("data", "empty"))[account], readingFile, innerDirectory, fileName)
+    except requests.exceptions.ConnectionError:
+        print ("Connection refused")
 
 def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
     try:

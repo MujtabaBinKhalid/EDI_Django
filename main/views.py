@@ -10,7 +10,31 @@ import socket
 import io
 import requests
 import json
+from service.views import tcpRequest
+from statusService.views import statusReports
+from background_task import background
 
+
+@background(schedule=3)
+def startingThreads():
+    print ("inside here")
+    thread_loadService = threading.Thread(
+            target=loadServices)
+    thread_statusSerivce = threading.Thread(
+            target=statusSerivces)
+
+    
+    thread_loadService.start()
+    thread_statusSerivce.start()
+    
+    thread_loadService.join()
+    thread_statusSerivce.join()
+    
+def loadServices():
+    tcpRequest()
+
+def statusSerivces():
+    statusReports()
 
 # it is used to fetch all the companies on the reqyuest of the super admin .
 

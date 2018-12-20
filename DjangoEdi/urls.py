@@ -1,8 +1,8 @@
 
 from django.contrib import admin
 from django.urls import include, path
-#from service.views import tcpRequest
-from statusService.views import statusReports
+from service.views import tcpRequest
+from main.views import startingThreads
 from django.conf.urls import url
 
 urlpatterns = [
@@ -11,8 +11,17 @@ urlpatterns = [
     path('index/', include("main.urls")),
 ]
 
+
 try:
-    # tcpRequest(repeat=300, repeat_until=None)
-    statusReports(repeat=300, repeat_until=None)
-except KLOeyboardInterrupt:
+    print ("hello-1")
+    startingThreads(repeat=5)
+except KeyboardInterrupt:
     print("Service Ended !! ")
+
+
+# try:
+#     print ("hello-2")
+#     statusReports(repeat=300)
+# except KeyboardInterrupt:
+#     print("Service Ended !! ")
+
