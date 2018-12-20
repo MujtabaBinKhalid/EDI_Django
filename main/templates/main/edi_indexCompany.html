@@ -74,29 +74,22 @@ background: #555555;
                                        <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                                      </div>
                                      <div class="modal-body">
-                                       <p>Select a Active load and find out the status report.</p>
-                                         <form>
-                                                   <div class="form-group">
-                                                       <label class="form-control-label" for="activeloads">Active loads</label>
-                                                       <div class="input-group-prepend">
-                                                           <select name="activeloads" id = "activeloads" class="form-control col-lg-12">
-                                                               <option value="selectedvalue" selected disabled>Select a load</option>
-                                                           </select>
-                                                       </div>
-                                                   </div>
+                                       <p>Set your paths to find out the shipment-status.</p>
+                                         <form name = "submitting-form">
+                                                  
                                 <div class="form-group">
-                                  <label class="form-control-label" for = "filepath">File Path</label>
-                                  <input type="text" id ="filepath" placeholder="Path where your file will be saved" class="form-control">
+                                  <label class="form-control-label" for = "inputpath">Input Path</label>
+                                  <input type="text" id ="inputpath" placeholder="Path where you will request for the shipment" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                  <label class="form-control-label" for= "filename">File Name</label>
-                                  <input type="text" id= "filename" placeholder="Name of the  your file" class="form-control">
+                                  <label class="form-control-label" for= "outputpath">Output Path</label>
+                                  <input type="text" id= "outputpath" placeholder="Path where your status report will be generated" class="form-control">
                                 </div>
-                                               </form>
+                                   </form>
                                      </div>
                                      <div class="modal-footer">
                                        <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
-                                       <button type="button"  id = "status " class="btn btn-primary">Generate Status</button>
+                                       <button type="button"  id = "status" class="btn btn-primary">Create</button>
                                      </div>
                                    </div>
                                  </div>
@@ -191,25 +184,11 @@ background: #555555;
        <script src="{% static  'main/assets/vendor/jquery-validation/jquery.validate.min.js'  %}"></script>
        <script src="{% static  'main/assets/js/charts-home.js'  %}"></script>
        <script src="{% static  'main/assets/js/front.js'  %}"></script>
+       <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
        <script>
        $( document ).ready(function() {
-       disablingFields(["filepath", "filename"])
-     populatingDropdowns()
-
-    // keeping track of the other dropdown.
-    $('#activeloads').change(function () {
-            disablingEmptyFields(["filepath","filename"]);
-        selectVal = $('#activeloads').val();
-             if (selectVal != "selectedvalue"){
-               document.getElementById("filepath").disabled = false;
-               connecting_ftpAccount()
-           }
-             else
-                 document.getElementById("filepath").disabled = true;
-    });
-
-
+       disablingFields(["outputpath", "status"])
    }); // ready func .
 
 
@@ -221,8 +200,44 @@ background: #555555;
                csrfmiddlewaretoken: '{{ csrf_token }}' ,
            },
            success: function(response) {
-               console.log(response)
-           }
+            creatingPaths()
+              console.log(response)
+           },
+           error: function(jqXHR, textStatus, errorThrown){
+          
+          swal("FTP Account!", "No FTP Account  is not associated with this company", "error")
+        
+
+                            
+                  }
+   }) // ajax call ends
+   }
+
+    function creatingPaths(){
+       $.ajax({
+           url :  "{% url 'main:status_paths' %}",
+           type: "post",
+           data: {
+               csrfmiddlewaretoken: '{{ csrf_token }}' ,
+               "inputpath": $("#inputpath").val(),
+                "outputpath":$("#outputpath").val(),
+
+           },
+           success: function(response) {
+             console.log(response)
+             if (response === "Success"){
+              swal("Status Directory!", "Status Directories has been created", "success")
+             }
+             else if (response === "Error") {
+              swal("Status Directory!", "Status Directories already exists", "error")
+             }
+         
+           var full_form = document.getElementsByName('submitting-form')[0];
+                            full_form.reset();
+        
+          },
+           error: function(jqXHR, textStatus, errorThrown){                       
+                  }
    }) // ajax call ends
    }
 
@@ -267,53 +282,30 @@ background: #555555;
      	return checkingStatus;
      	}
 
-
-    function populatingDropdowns(){
-        $.ajax({
-            url :  "{% url 'main:activeLoads'%}",
-            type: "post",
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}' ,
-            },
-            success: function(response) {
-                console.log(response)
-
-                var select = document.getElementById("activeloads");
-                for(var i=0;i<response.dropdown.length; i++){
-                 var option_element = document.createElement("option");
-                option_element.textContent = response.dropdown[i].load_number;
-                option_element.value =  response.dropdown[i].id_device_load_record;
-                select.appendChild(option_element);
-        }
-            select.disabled=false;
-            },
-            error: function(jqXHR, textStatus, errorThrown){
-               alert("Some thing went wrong.")
-    }
-    })
-    }
-
-
-          $('#filepath').on('keyup',function(){
+          $('#inputpath').on('keyup',function(){
                   var textvalue = $(this).val().trim();
                   if ((textvalue.length >0) ) {
-                    enablingField(["filename"]);
+                    enablingField(["outputpath"]);
           		}
           		else if ((textvalue.length  == 0)) {
-                disablingEmptyFields(["filename"]);
+                disablingEmptyFields(["outputpath"]);
           		}
            });
 
-           $('#filename').on('keyup',function(){
+           $('#outputpath').on('keyup',function(){
                    var textvalue = $(this).val().trim();
-           		var status = validatingAboveFields(["#filepath"]);
-                   if ((textvalue.length >0) && status ) {
+           		var status = validatingAboveFields(["#inputpath"]);
+                   if ((textvalue.length >0) && status) {
                        document.getElementById("status").disabled = false;
            		}
            		else if ((textvalue.length  == 0)) {
                            document.getElementById("status").disabled = true;
            		}
             });
+            $("#status").click(function(){
+              connecting_ftpAccount();
+});
+
 
        </script>
 

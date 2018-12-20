@@ -208,7 +208,7 @@ def index(request):
     # """ Index page, after login """
 
     if request.method == "GET":
-      #try:   
+      try:   
         request.session['role'] = fetchingStatus(request)
     
         if (request.session['role'] == "company"):
@@ -256,9 +256,11 @@ def index(request):
                 }
 
             return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data})
-     # except Exception as e:
-      #      return render(request, 'Login/index.html')
+      except Exception as e:
+            return render(request, 'Login/index.html')
    
+
+
 
 def accountCreation(request):
     
@@ -286,9 +288,7 @@ def accountCreation(request):
         payload = json.dumps(data)
         response = requests.request("POST", url, data=payload, headers=headers)
         python_dict =  json.loads(response.text)
-
-        if (python_dict.get("status", "empty") == "Success"):
-            return HttpResponse(request.POST['passwordOut'])
+        return HttpResponse(python_dict.get("status", "empty"))
                
         
     elif request.method == "GET":
@@ -328,12 +328,11 @@ def statusReport(request):
 
 
 def generatingReport(request):
-    result = fetchingLatLong(request)
-    
+    result = fetchingLatLong(request) 
     output = creatingOutputFile(ftp_companyLogin, request, result.get('location_lat'),
-                                result.get('location_long'),  str(request.POST['file_name']))
-   # return HttpResponse(ftp_companyLogin.getwelcome())
-    return HttpResponse(output)
+                                 result.get('location_long'),  str(request.POST['file_name']))
+
+    return HttpResponse(request.POST['device_record'])
 
 
 def establishingConnection(request):
@@ -341,7 +340,7 @@ def establishingConnection(request):
     global ftp_companyLogin, accountDetail
     if(request.session['role'] == "super_admin"):
         try:
-            accountDetail = fetchingAccountInfo(request, request.session['company_email'])
+            accountDetail = fetchingAccountInfo(request, request.POST['email'])
             if accountDetail:
                 ftp_companyLogin = ftplib.FTP(accountDetail.get("ipHost", "empty"), accountDetail.get("userName", "empty"),
                          accountDetail.get("password", "empty"))
@@ -368,9 +367,7 @@ def fetchingLatLong(request):
    
     headers = {
     'Content-Type': "application/json",
-    'Authorization': "Bearer e67113da-e0e7-4be2-8f2f-3c2e718fe8ad",
-    'cache-control': "no-cache",
-    'Postman-Token': "215c527d-fdc1-4bad-aaeb-fff9792c4e36"
+    'Authorization': "Bearer "+request.session['token'] ,
     }
 
     response = requests.request("POST", url, data=payload, headers=headers)
@@ -430,6 +427,20 @@ def fetchingUserTilesData(request):
         return "error"
 
 
+def creatingStatusPaths(request):
+    url = "http://localhost:3000/status/"
+    data = {'email':request.session['name'],
+     "input_path": request.POST['inputpath'], "output_path": request.POST['outputpath']}
+    payload = json.dumps(data)
+    headers = {
+    'Content-Type': "application/json",
+    }
+
+    response = requests.request("POST", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
+    return HttpResponse(python_dict.get("status", "empty"))
+    
+
 def fetchingAccountInfo(request , name):
     url = "http://54.245.173.223:3000/account/fetchingCompany"
     data = {'email': name }
@@ -479,10 +490,11 @@ def creatingOutputFile(ftp_companyLogin, request, lat, longitude, filename):
         GS*QM*SCAC*RBINTEST*20100819*1851*214060250*X*004010
         ST*214*0001
         B10*3766*9924017*SCAC
-        MS1***""" + lat +" " + longitude + """*
-        SE*10*0002
+        MS1***""" + lat + "-"+longitude+ """
+        *SE*10*0002
         GE*2*214060250
         IEA*1*100110046"""
     output = io.BytesIO(str.encode(stautusMessage))
     ftp_companyLogin.storbinary('STOR ' + filename + ".edi", output)
-    return ftp_companyLogin.getwelcome()
+    return "output stored !"
+    

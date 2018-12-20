@@ -116,25 +116,18 @@ background: #555555;
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="activeloads">Active loads</label>
-                                            <div class="input-group-prepend">
-                                                <select name="activeloads" id = "activeloads" class="form-control col-lg-12">
-                                                    <option value="selectedvalue" selected disabled>Select a load</option>
-                                                </select>
-                                            </div>
-                                        </div>
+                                       
                      <div class="form-group">
-                       <label class="form-control-label" for = "filepath">File Path</label>
-                       <input type="text" id ="filepath" placeholder="Path where your file will be saved" class="form-control">
+                       <label class="form-control-label" for = "inputpath">Input Path</label>
+                       <input type="text" id ="inputpath" placeholder="Path where you will request for the shipment" class="form-control">
                      </div>
                      <div class="form-group">
-                       <label class="form-control-label" for= "filename">File Name</label>
-                       <input type="text" id= "filename" placeholder="Name of the  your file" class="form-control">
+                       <label class="form-control-label" for= "outputpath">Output Path</label>
+                       <input type="text" id= "outputpath" placeholder="Path where your status report will be generated" class="form-control">
                      </div>
                                         <center>
                                             <div class="form-group">
-                                                <input type="button" id="status" value="Generate Status" class="btn btn-primary">
+                                                <input type="button" id="status" value="Create" class="btn btn-primary">
                                             </div>
                                         </center>
                                     </form>
@@ -166,55 +159,35 @@ background: #555555;
 	
     <script>
     $( document ).ready(function() {
-    disablingFields(["activeloads","filepath", "filename","status"])
+    disablingFields(["inputpath", "outputpath","status"])
     $('#comapnyname').change(function () {
-        document.getElementById("activeloads").disabled = true;
-        disablingEmptyFields(["filepath","filename"]);
-        var select = document.getElementById("activeloads");
-        console.log (select.length)
-        if (select.length > 0){
-        select.options.length = 0
-        }
-        var option_element = document.createElement("option");
-       option_element.textContent ="Select a load"
-       option_element.value ="selected_value";
-       select.appendChild(option_element);
-
+        disablingEmptyFields(["inputpath","outputpath"]);
         selectVal = $('#comapnyname').val();
         if (selectVal != "selectedvalue") {
-        populatingDropdowns()
+        console.log(selectVal)    
+        connecting_ftpAccount(selectVal)
    }
 }) // event handler of the drop down ends.
 
  // keeping track of the other dropdown.
- $('#activeloads').change(function () {
-         disablingEmptyFields(["filepath","filename"]);
-     selectVal = $('#activeloads').val();
-          if (selectVal != "selectedvalue"){
-           
-            connecting_ftpAccount()
-        }
-          else
-              document.getElementById("filepath").disabled = true;
- });
-
-
 }); // ready func .
 $("#status").click(function(){
     generatingReport();
 });
 
-function connecting_ftpAccount(){
+function connecting_ftpAccount(email){
     $.ajax({
         url :  "{% url 'main:establishingConnection' %}",
         type: "post",
         data: {
             csrfmiddlewaretoken: '{{ csrf_token }}' ,
+            "email":email,
+
         },
         success: function(response) {
             console.log(response)
             if( response !== "No Ftp Account is associated with it."){
-                document.getElementById("filepath").disabled = false;
+                document.getElementById("inputpath").disabled = false;
             }
             else {
                 swal("FTP Account!", "You dont have any FTP Account associated with this company", "error")
@@ -232,17 +205,23 @@ function connecting_ftpAccount(){
 // generating report
 function generatingReport(){
     $.ajax({
-        url :  "{% url 'main:generating_report' %}",
+        url :  "{% url 'main:status_paths' %}",
         type: "post",
         data: {
             csrfmiddlewaretoken: '{{ csrf_token }}' ,
-             "device_record": $('#activeloads').val(),
-            "file_path": $("#filepath").val(),
-            "file_name":$("#filename").val(),
+            "inputpath": $("#inputpath").val(),
+            "outputpath":$("#outputpath").val(),
         },
         success: function(response) {
-            console.log(response)
-            alert("Sucessful")
+            if (response === "Success"){
+              swal("Status Directory!", "Status Directories has been created", "success")
+             }
+             else if (response === "Error") {
+              swal("Status Directory!", "Status Directories already exists", "error")
+             }
+         
+           var full_form = document.getElementsByName('submitting-form')[0];
+                            full_form.reset();
         },
         error: function(jqXHR, textStatus, errorThrown){
            alert("Some thing went wrong.")
@@ -318,19 +297,19 @@ function disablingFields(textfields){
  }
   // validating fields
 
-       $('#filepath').on('keyup',function(){
+       $('#inputpath').on('keyup',function(){
                var textvalue = $(this).val().trim();
                if ((textvalue.length >0) ) {
-                 enablingField(["filename"]);
+                 enablingField(["outputpath"]);
        		}
        		else if ((textvalue.length  == 0)) {
-             disablingEmptyFields(["filename"]);
+             disablingEmptyFields(["outputpath"]);
        		}
         });
 
-        $('#filename').on('keyup',function(){
+        $('#outputpath').on('keyup',function(){
                 var textvalue = $(this).val().trim();
-        		var status = validatingAboveFields(["#filepath"]);
+        		var status = validatingAboveFields(["#inputpath"]);
                 if ((textvalue.length >0) && status ) {
                     document.getElementById("status").disabled = false;
         		}

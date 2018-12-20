@@ -1,13 +1,10 @@
 import json
-import socket
 import io
 import ftplib
 from django.shortcuts import render
-from main.models import accountRegistration
 from background_task import background
 from io import BytesIO
 import requests
-from django.contrib.sessions.backends.db import SessionStore
 
 
 @background(schedule=300)
@@ -55,63 +52,69 @@ def tcpRequest():
 
 
 def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
-    data = {}
-    loadNumber = readingFile.split('*')[2].split("G")[0]
-    rdate = readingFile.split('*')[4] + " " + readingFile.split('*')[6]
-    senderNumber = readingFile.split('*')[34].split("A")[0]
-    weight = readingFile.split('*')[37]
-    ssdate = readingFile.split('*')[26] + " "+readingFile.split('*')[28]
-    userEmail = readingFile.split('*')[12]
-    deviceserial = readingFile.split('*')[15].split(":")[1]
-    mcnumber = readingFile.split('*')[18].split(":")[1]
-    senderName = readingFile.split("*")[21]
-    ssaddress = readingFile.split("*")[23]
-    ai = readingFile.split('*')[40].split(":")[1]
-    aa = readingFile.split('*')[43].split(":")[1]
-    maxp = readingFile.split('*')[49].split(":")[1]
-    minp = readingFile.split('*')[46].split(":")[1]
-    minh = readingFile.split('*')[52].split(":")[1]
-    maxh = readingFile.split('*')[55].split(":")[1]
-    mint = readingFile.split('*')[58].split(":")[1]
-    maxt = readingFile.split('*')[61].split(":")[1]
-    trucknumber = readingFile.split('*')[64].split(":")[1]
-    trailernumber = readingFile.split('*')[67].split(":")[1]
-    trailersize = readingFile.split('*')[70].split(":")[1]
-    commodity = readingFile.split('*')[73]
-    pallet = readingFile.split('*')[75]
-    receiverName = readingFile.split("*")[78]
-    sraddress = readingFile.split("*")[80]
-    sddate = readingFile.split("*")[83]+" "+readingFile.split("*")[85]
-    receiverNumber = readingFile.split('*')[90]
+    try:
+        data = {}
+        loadNumber = readingFile.split('*')[2].split("G")[0]
+        rdate = readingFile.split('*')[4] + " " + readingFile.split('*')[6]
+        senderNumber = readingFile.split('*')[34].split("A")[0]
+        weight = readingFile.split('*')[37]
+        ssdate = readingFile.split('*')[26] + " "+readingFile.split('*')[28]
+        userEmail = readingFile.split('*')[12]
+        deviceserial = readingFile.split('*')[15].split(":")[1]
+        mcnumber = readingFile.split('*')[18].split(":")[1]
+        senderName = readingFile.split("*")[21]
+        ssaddress = readingFile.split("*")[23]
+        ai = readingFile.split('*')[40].split(":")[1]
+        aa = readingFile.split('*')[43].split(":")[1]
+        maxp = readingFile.split('*')[49].split(":")[1]
+        minp = readingFile.split('*')[46].split(":")[1]
+        minh = readingFile.split('*')[52].split(":")[1]
+        maxh = readingFile.split('*')[55].split(":")[1]
+        mint = readingFile.split('*')[58].split(":")[1]
+        maxt = readingFile.split('*')[61].split(":")[1]
+        trucknumber = readingFile.split('*')[64].split(":")[1]
+        trailernumber = readingFile.split('*')[67].split(":")[1]
+        trailersize = readingFile.split('*')[70].split(":")[1]
+        commodity = readingFile.split('*')[73]
+        pallet = readingFile.split('*')[75]
+        receiverName = readingFile.split("*")[78]
+        sraddress = readingFile.split("*")[80]
+        sddate = readingFile.split("*")[83]+" "+readingFile.split("*")[85]
+        receiverNumber = readingFile.split('*')[90]
 
-    data['commodities'] = commodity
-    data['weight'] = float(weight)
-    data['mc_number'] = mcnumber
-    data['trucking_company_name'] = senderName
-    data['active_insurance'] = bool(ai)
-    data['active_authority'] = bool(aa)
-    data['min_temperature'] = int(mint)
-    data['max_temperature'] = int(maxt)
-    data['truck_number'] = trucknumber
-    data['trailer_number'] = int(trailernumber)
-    data['trailer_size'] = trailersize
-    data['driver_number'] = senderNumber
-    data['min_pressure'] = int(minp)
-    data['max_pressure'] = int(maxp)
-    data['min_humidity'] = int(minh)
-    data['max_humidity'] = int(maxh)
-    data['pallet'] = int(pallet)
-    data['shippment_to_name'] = receiverName
-    data['shippment_to_phone'] = receiverNumber
-    data['device_serial'] = deviceserial
-    data['user_email'] = userEmail
-    data['load_number'] = loadNumber
-    data['pickup_location'] = ssaddress
-    data['dropoff_location'] = sraddress
-    data['shipment_start_time'] = ssdate
-    data['estimated_dropoff_time'] = sddate
-    data['required_dropoff_time'] = rdate
-    sendingData(accountDetails, data, filepath, fileName)
+        data['commodities'] = commodity
+        data['weight'] = float(weight)
+        data['mc_number'] = mcnumber
+        data['trucking_company_name'] = senderName
+        data['active_insurance'] = bool(ai)
+        data['active_authority'] = bool(aa)
+        data['min_temperature'] = int(mint)
+        data['max_temperature'] = int(maxt)
+        data['truck_number'] = trucknumber
+        data['trailer_number'] = int(trailernumber)
+        data['trailer_size'] = trailersize
+        data['driver_number'] = senderNumber
+        data['min_pressure'] = int(minp)
+        data['max_pressure'] = int(maxp)
+        data['min_humidity'] = int(minh)
+        data['max_humidity'] = int(maxh)
+        data['pallet'] = int(pallet)
+        data['shippment_to_name'] = receiverName
+        data['shippment_to_phone'] = receiverNumber
+        data['device_serial'] = deviceserial
+        data['user_email'] = userEmail
+        data['load_number'] = loadNumber
+        data['pickup_location'] = ssaddress
+        data['dropoff_location'] = sraddress
+        data['shipment_start_time'] = ssdate
+        data['estimated_dropoff_time'] = sddate
+        data['required_dropoff_time'] = rdate
+        sendingData(accountDetails, data, filepath, fileName)
+    except Exception as e:    
+        movingCurrentInputFile(filepath, fileName, "notSucessful")
+        creatingDirectories(filepath, "sucessful")
+        outputFile(fileName, accountDetails, "R")
+
 
 
 def sendingData(accountDetails, data, filepath, fileName):
@@ -171,7 +174,7 @@ def outputFile(filename, account, status):
 
 def generatingToken():
     # It is used to authenticate the user/company and returns the request status.
-    url = "https://api.coldwhere.com/oauth/token"
+    url = "http://35.167.129.201:8081/oauth/token"
     username= "ftp@coldwhere.com"
     password = "3tpfkLEZCobJgOJP9O96"
     payload = "grant_type=password&username=" + username + "&password=" + password + "&client_id=spring-security-oauth2-read-write-client&undefined="

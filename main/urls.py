@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^companyActiveLoads/$', views.activeLoads, name="activeLoads"),
     url(r'^logout$', views.logout, name="logout"),
     url(r'^generatingReport/$', views.generatingReport, name="generating_report"),
+    url(r'^statusPaths/$', views.creatingStatusPaths, name="status_paths"),
     url(r'^establishingConnection/$', views.establishingConnection, name="establishingConnection"),
 ]

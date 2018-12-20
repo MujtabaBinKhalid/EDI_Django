@@ -31,7 +31,8 @@ INSTALLED_APPS = [
     'main',
     'service',
     'background_task',
-    'sweetify'
+    'sweetify',
+    'statusService'
 ]
 
 MIDDLEWARE = [

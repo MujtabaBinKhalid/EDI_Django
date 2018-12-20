@@ -228,7 +228,12 @@
                             var full_form = document.getElementsByName('submitting-form')[0];
                             full_form.reset();
 
-                             swal("FTP Account!", "Company FTP Account added", "success")
+                             if (response === "Success"){
+                          swal("FTP Account!", "Company FTP Account added", "success")
+                           }
+                        else if (response === "Error") {
+                        swal("FTP Account!", "Company FTP Account already available", "error")
+                         }
 
                            },
                            error: function(jqXHR, textStatus, errorThrown){

@@ -1,7 +1,8 @@
 
 from django.contrib import admin
 from django.urls import include, path
-from service.views import tcpRequest
+#from service.views import tcpRequest
+from statusService.views import statusReports
 from django.conf.urls import url
 
 urlpatterns = [
@@ -11,6 +12,7 @@ urlpatterns = [
 ]
 
 try:
-    tcpRequest(repeat=300, repeat_until=None)
-except KeyboardInterrupt:
+    # tcpRequest(repeat=300, repeat_until=None)
+    statusReports(repeat=300, repeat_until=None)
+except KLOeyboardInterrupt:
     print("Service Ended !! ")
