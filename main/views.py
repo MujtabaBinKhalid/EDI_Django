@@ -376,7 +376,8 @@ def establishingConnection(request):
             if accountDetail:
                 ftp_companyLogin = ftplib.FTP(accountDetail.get("ipHost", "empty"), accountDetail.get("userName", "empty"),
                          accountDetail.get("password", "empty"))
-                return JsonResponse({'result': "its connected !"})
+                request.session['name'] = request.POST['email']    
+                return JsonResponse({'result': "its connected jani !"})
         except Exception as e:
             ftp_companyLogin = "No Ftp Account is associated with it."
     elif(request.session['role'] == "company"):
@@ -471,7 +472,7 @@ def creatingStatusPaths(request):
     response = requests.request("POST", url, data=payload, headers=headers)
     python_dict =  json.loads(response.text)
     return HttpResponse(python_dict.get("status", "empty"))
-
+   
 def creatingLoadPaths(request):
     url = "http://54.245.173.223:3000/load/"
     data = {'email':request.session['name'],
