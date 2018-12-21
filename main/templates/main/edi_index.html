@@ -23,7 +23,11 @@
   <link rel="stylesheet" href="{% static  'main/assets/css/custom.css'  %}">
   <!-- Favicon-->
   <link rel="shortcut icon" href="{% static  'main/assets/img/favicon.ico'  %}">
-
+  <style>      
+   #comapnyname option {
+   background: #555555;
+   }
+      </style>
 </head>
   <body>
     <header class="header">
@@ -58,6 +62,8 @@
                   <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
                       <li><a href="{% url 'main:account' %}">Account Creation</a></li>
                     <li><a href="{% url 'main:report' %}">Status Report</a></li>
+                    <li><a href="#"  data-toggle="modal" data-target="#LoadModal" >All Loads</a></li>
+           
 
                   </ul>
                 </li>
@@ -73,6 +79,37 @@
         <section class="no-padding-top no-padding-bottom">
           <div class="container-fluid">
             <div class="row">
+                <div id="LoadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
+                    <div role="document" class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header"><strong id="exampleModalLabel" class="modal-title">View All Loads</strong>
+                          <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Set your path to view your package details.</p>
+                            <form name = "submitting-form">
+                                <label class="form-control-label" for="comapnyname">Company Name</label>
+                                <div class="input-group-prepend">
+                                    <select name="comapnyname"  id = "comapnyname" class="form-control col-lg-12">
+                                        <option value="selectedvalue" selected disabled>Select a company</option>
+                                        {% for value in dropdown%}
+                                        <option value={{value.email}}>{{value.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                   <div class="form-group">
+                     <label class="form-control-label" for= "outputpath">Output Path</label>
+                     <input type="text" id= "loadoutputpath" placeholder="Path where your package details will be generated" class="form-control">
+                   </div>
+                      </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                          <button type="button"  id = "loadstatus" class="btn btn-primary">Create</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
               <div class="col-md-3 col-sm-6">
                 <div class="statistic-block block">
                   <div class="progress-details d-flex align-items-end justify-content-between">
@@ -191,5 +228,97 @@
        <script src="{% static  'main/assets/vendor/jquery-validation/jquery.validate.min.js'  %}"></script>
        <script src="{% static  'main/assets/js/charts-home.js'  %}"></script>
        <script src="{% static  'main/assets/js/front.js'  %}"></script>
+       <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+       
+       <script>
+          $( document ).ready(function() {
+          disablingFields(["loadoutputpath", "loadstatus"])
+      }); // ready func .
+   
+      function disablingFields(textfields){
+    	for (i = 0; i < textfields.length; i++) {
+   	document.getElementById(textfields[i]).disabled=true;
+   		}
+    }
+
+    function connecting_ftpAccount(email){
+    $.ajax({
+        url :  "{% url 'main:establishingConnection' %}",
+        type: "post",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}' ,
+            "email":email,
+
+        },
+        success: function(response) {
+            console.log(response)
+            if( response !== "No Ftp Account is associated with it."){
+                document.getElementById("loadoutputpath").disabled = false;
+            }
+            else {
+                swal("FTP Account!", "You dont have any FTP Account associated with this company", "error")
+                         
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            swal("FTP Account!", "You dont have any FTP Account associated with this company", "error")
+
+}
+
+        
+}) // ajax call ends
+}
+
+function creatingLoadPaths(){
+       $.ajax({
+           url :  "{% url 'main:load_paths' %}",
+           type: "post",
+           data: {
+               csrfmiddlewaretoken: '{{ csrf_token }}' ,
+                "outputpath":$("#loadoutputpath").val(),
+
+           },
+           success: function(response) {
+             console.log(response)
+             if (response === "Success"){
+              swal("Status Directory!", "Status Directories has been created", "success")
+             }
+             else if (response === "Error") {
+              swal("Status Directory!", "Status Directories already exists", "error")
+             }
+         
+           var full_form = document.getElementsByName('submitting-form')[0];
+                            full_form.reset();
+        
+          },
+           error: function(jqXHR, textStatus, errorThrown){                       
+                  }
+   }) // ajax call ends
+   }
+    $('#comapnyname').change(function () {
+        selectVal = $('#comapnyname').val();
+        if (selectVal != "selectedvalue") {
+          connecting_ftpAccount(selectVal)
+    }
+    }) // event handler of the drop down ends.
+
+ $('#loadoutputpath').on('keyup',function(){
+                   var textvalue = $(this).val().trim();
+           	       if ((textvalue.length >0)) {
+                       document.getElementById("loadstatus").disabled = false;
+           		}
+           		else if ((textvalue.length  == 0)) {
+                           document.getElementById("loadstatus").disabled = true;
+           		}
+            });
+
+            
+            $("#loadstatus").click(function(){
+              creatingLoadPaths();
+});
+
+</script>   
   </body>
 </html>

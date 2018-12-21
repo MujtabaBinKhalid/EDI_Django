@@ -19,27 +19,27 @@ from background_task import background
 @background(schedule=3)
 def startingThreads():
     print ("inside here")
-    # thread_loadService = threading.Thread(
-    #         target=loadServices)
-    # thread_statusSerivce = threading.Thread(
-    #         target=statusSerivces)
+    thread_loadService = threading.Thread(
+            target=loadServices)
+    thread_statusSerivce = threading.Thread(
+            target=statusSerivces)
     thread_viewLoad = threading.Thread(
             target=viewAllLoads)
 
     
-    # thread_loadService.start()
-    # thread_statusSerivce.start()
+    thread_loadService.start()
+    thread_statusSerivce.start()
     thread_viewLoad.start()
     
-    # thread_loadService.join()
+    thread_loadService.join()
     thread_viewLoad.join()
-    # thread_statusSerivce.join()
+    thread_statusSerivce.join()
     
-# def loadServices():
-#     tcpRequest()
+def loadServices():
+    tcpRequest()
 
-# def statusSerivces():
-#     statusReports()
+def statusSerivces():
+    statusReports()
 
 def viewAllLoads():
     viewLoads()
@@ -230,6 +230,9 @@ def fetchingStatus(request):
     response = requests.request("GET", url, data=payload, headers=headers)
     python_dict =  json.loads(response.text)
     if (python_dict.get("status", "empty") == "Success"):
+        if(python_dict.get("details", "empty").get("role") == "user"):
+            request.session['name'] = python_dict.get("details", "empty").get("company_email")
+        
         return (python_dict.get("details", "empty").get("role"))
     else:
         return ("INVALID CREDENTIALS")
@@ -243,7 +246,7 @@ def index(request):
       try:   
         request.session['role'] = fetchingStatus(request)
     
-        if (request.session['role'] == "company"):
+        if ((request.session['role'] == "company") or ((request.session['role'] == "user"))):
            
             response = fetchingCompanyTilesData(request)
             if (response == "noerror"):
@@ -265,6 +268,7 @@ def index(request):
         elif(request.session['role'] == "super_admin"):
              
             response = fetchingUserTilesData(request)
+            dropdown_data = fetchingCompanies(request)
             
             if (response == "noerror"):
                 tiles_data = {
@@ -287,7 +291,7 @@ def index(request):
                     "accounts_count": countingAccounts(request)
                 }
 
-            return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data})
+            return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data , "dropdown": dropdown_data})
       except Exception as e:
             return render(request, 'Login/index.html')
    
@@ -303,7 +307,7 @@ def accountCreation(request):
         'cache-control': "no-cache",
         }
 
-        if(request.session['role'] == "company"):
+        if ((request.session['role'] == "company") or ((request.session['role'] == "user"))):
             data = {"ipHost": request.POST['iphost'],"userName":request.POST['username'],"password":request.POST['password'],"email":request.session['name'],
             "input_path":request.POST['inputpath'],"output_path":request.POST['outputpath'],
             "ip_hostOut": request.POST['iphostOut'],
@@ -326,7 +330,7 @@ def accountCreation(request):
     elif request.method == "GET":
         try:
             sessionData = request.session['name']
-            if (request.session['role'] == "company"):
+            if ((request.session['role'] == "company") or ((request.session['role'] == "user"))):
                 return render(request, 'main/edi_registration.html', {'cookie_email':  request.COOKIES.get('user_email')})
             elif(request.session['role'] == "super_admin"):
                  # IP AND THE EMAIL ADDRESS WILL BE CHANGED LATER. IT HAS BEEN USED
@@ -340,7 +344,7 @@ def accountCreation(request):
 
 def activeLoads(request):
       # fetching loads of the logged in
-    if request.session['role'] == "company":
+    if ((request.session['role'] == "company") or ((request.session['role'] == "user"))):
         if request.is_ajax() or request.method == 'POST' and request.session['role'] == "company":
             
             dropdown_data = fetchingLoads(request , request.session['name'])
@@ -380,7 +384,7 @@ def establishingConnection(request):
                 return JsonResponse({'result': "its connected jani !"})
         except Exception as e:
             ftp_companyLogin = "No Ftp Account is associated with it."
-    elif(request.session['role'] == "company"):
+    elif ((request.session['role'] == "company") or ((request.session['role'] == "user"))):
         try:
             accountDetail = fetchingAccountInfo(request, request.session['name'])  
             if accountDetail:
@@ -486,7 +490,6 @@ def creatingLoadPaths(request):
     python_dict =  json.loads(response.text)
     return HttpResponse(python_dict.get("status", "empty"))
     
-
 def fetchingAccountInfo(request , name):
     url = "http://54.245.173.223:3000/account/fetchingCompany"
     data = {'email': name }

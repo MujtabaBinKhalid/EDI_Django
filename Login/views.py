@@ -20,27 +20,13 @@ def index(request):
             return render(request, 'Login/index.html')
 
     elif request.method == "POST":
-        try:
-            loginStatus = request.POST['option']
-            request.session['userStatus'] = "login_company"
-            response = "login_company"
-            responseValue = authentication(request)
-        except Exception as e:
-            request.session['userStatus'] = "login_user"
-            response = "login_user"
-            python_dict = authentication(request)
+        python_dict = authentication(request)
 
-        if(python_dict.get("access_token", "empty") != "empty"):
-            
+        if(python_dict.get("access_token", "empty") != "empty"):    
             request.session['name'] = request.POST['username']
             request.session['token'] = python_dict.get("access_token", "empty")
-            # httpresponse = HttpResponse(python_dict)
-            # settingCookie("user_email",request.POST['username'], httpresponse)
-            # settingCookie("token",(python_dict.get("access_token", "empty"), httpresponse)
-            # set_cookie(httpresponse, "email_user", request.POST['username'])
             return redirect("main:index")
         else:
-           
              return render(request, 'Login/index.html', {"error": "login credentials are not valid"})
 
 

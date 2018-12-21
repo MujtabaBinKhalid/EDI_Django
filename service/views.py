@@ -48,7 +48,7 @@ def tcpRequest():
                     # print (innerDirectory)
                     # print (fileName)
                     readingCurrentFile((accounts.get("data", "empty"))[account], readingFile, innerDirectory, fileName)
-    except requests.exceptions.ConnectionError:
+    except Exception as e:
         print ("Connection refused")
 
 def readingCurrentFile(accountDetails, readingFile, filepath, fileName):

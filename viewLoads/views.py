@@ -9,27 +9,27 @@ import requests
        
 def viewLoads(): 
     print ("Pikabuu-2")
-    # try:
-    url = "http://54.245.173.223:3000/account/"
-    payload = ""
-    headers = {
-        'cache-control': "no-cache",
-        }
-    response = requests.request("GET", url, data=payload, headers=headers)
-    accounts =  json.loads(response.text)
-    for account in range(len(accounts.get("data", "empty"))):
-        global host, ftp, loadOutputPath
-        ftp = ftplib.FTP((accounts.get("data", "empty"))[account].get ("ipHost"),
-        (accounts.get("data", "empty"))[account].get ("userName"), 
-        (accounts.get("data", "empty"))[account].get ("password"))
-        paths = fetchingPaths ((accounts.get("data", "empty"))[account].get ("email"))
-        if not (is_empty(paths)):
-            loadOutputPath = paths.get("output_path") 
-            fetchingAllLoads((accounts.get("data", "empty"))[account])           
-        else:
-            pass    
-    # except Exception as e:   
-    #     print ("Connection refused")
+    try:
+        url = "http://54.245.173.223:3000/account/"
+        payload = ""
+        headers = {
+            'cache-control': "no-cache",
+            }
+        response = requests.request("GET", url, data=payload, headers=headers)
+        accounts =  json.loads(response.text)
+        for account in range(len(accounts.get("data", "empty"))):
+            global host, ftp, loadOutputPath
+            ftp = ftplib.FTP((accounts.get("data", "empty"))[account].get ("ipHost"),
+            (accounts.get("data", "empty"))[account].get ("userName"), 
+            (accounts.get("data", "empty"))[account].get ("password"))
+            paths = fetchingPaths ((accounts.get("data", "empty"))[account].get ("email"))
+            if not (is_empty(paths)):
+                loadOutputPath = paths.get("output_path") 
+                fetchingAllLoads((accounts.get("data", "empty"))[account])           
+            else:
+                pass    
+    except Exception as e:   
+        print ("Connection refused")
 def fetchingAllLoads(account):
     print ("fetchingAllLoads")
     print (account.get("email"))

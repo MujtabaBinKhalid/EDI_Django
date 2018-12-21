@@ -46,7 +46,7 @@ def statusReports():
                         readingCurrentFile((accounts.get("data", "empty"))[account], readingFile, statusInputPath, fileName)
             else:
                 pass    
-    except requests.exceptions.ConnectionError:
+    except Exception as e:
         print ("Connection refused")
 def readingCurrentFile(accountDetails, readingFile, filepath, fileName):
     try: 
