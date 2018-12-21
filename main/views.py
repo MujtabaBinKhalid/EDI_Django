@@ -12,29 +12,37 @@ import requests
 import json
 from service.views import tcpRequest
 from statusService.views import statusReports
+from viewLoads.views import viewLoads
 from background_task import background
 
 
 @background(schedule=3)
 def startingThreads():
     print ("inside here")
-    thread_loadService = threading.Thread(
-            target=loadServices)
-    thread_statusSerivce = threading.Thread(
-            target=statusSerivces)
+    # thread_loadService = threading.Thread(
+    #         target=loadServices)
+    # thread_statusSerivce = threading.Thread(
+    #         target=statusSerivces)
+    thread_viewLoad = threading.Thread(
+            target=viewAllLoads)
 
     
-    thread_loadService.start()
-    thread_statusSerivce.start()
+    # thread_loadService.start()
+    # thread_statusSerivce.start()
+    thread_viewLoad.start()
     
-    thread_loadService.join()
-    thread_statusSerivce.join()
+    # thread_loadService.join()
+    thread_viewLoad.join()
+    # thread_statusSerivce.join()
     
-def loadServices():
-    tcpRequest()
+# def loadServices():
+#     tcpRequest()
 
-def statusSerivces():
-    statusReports()
+# def statusSerivces():
+#     statusReports()
+
+def viewAllLoads():
+    viewLoads()
 
 # it is used to fetch all the companies on the reqyuest of the super admin .
 
@@ -452,9 +460,22 @@ def fetchingUserTilesData(request):
 
 
 def creatingStatusPaths(request):
-    url = "http://localhost:3000/status/"
+    url = "http://54.245.173.223:3000/status/"
     data = {'email':request.session['name'],
      "input_path": request.POST['inputpath'], "output_path": request.POST['outputpath']}
+    payload = json.dumps(data)
+    headers = {
+    'Content-Type': "application/json",
+    }
+
+    response = requests.request("POST", url, data=payload, headers=headers)
+    python_dict =  json.loads(response.text)
+    return HttpResponse(python_dict.get("status", "empty"))
+
+def creatingLoadPaths(request):
+    url = "http://54.245.173.223:3000/load/"
+    data = {'email':request.session['name'],
+     "output_path": request.POST['outputpath']}
     payload = json.dumps(data)
     headers = {
     'Content-Type': "application/json",

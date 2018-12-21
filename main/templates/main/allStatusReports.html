@@ -213,6 +213,7 @@ function generatingReport(){
             "outputpath":$("#outputpath").val(),
         },
         success: function(response) {
+            console.log (response)
             if (response === "Success"){
               swal("Status Directory!", "Status Directories has been created", "success")
              }

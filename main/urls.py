@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^logout$', views.logout, name="logout"),
     url(r'^generatingReport/$', views.generatingReport, name="generating_report"),
     url(r'^statusPaths/$', views.creatingStatusPaths, name="status_paths"),
+    url(r'^loadsPaths/$', views.creatingLoadPaths, name="load_paths"),
     url(r'^establishingConnection/$', views.establishingConnection, name="establishingConnection"),
 ]

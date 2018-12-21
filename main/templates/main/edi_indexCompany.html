@@ -21,6 +21,10 @@
 #activeloads option {
 background: #555555;
 }
+
+#LoadModal{
+  padding: 110px;
+}
   </style>
 </head>
   <body>
@@ -52,7 +56,8 @@ background: #555555;
                 <li><a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-windows"></i>EDI</a>
                   <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
                       <li><a href="{% url 'main:account' %}">Account Creation</a></li>
-                    <li><a href="#"  data-toggle="modal" data-target="#myModal" >Status Report</a></li>
+                      <li><a href="#"  data-toggle="modal" data-target="#statusModal" >Status Report</a></li>
+                      <li><a href="#"  data-toggle="modal" data-target="#LoadModal" >All Loads</a></li>
                   </ul>
                 </li>
       </nav>
@@ -66,8 +71,33 @@ background: #555555;
         <section class="no-padding-top no-padding-bottom">
           <div class="container-fluid">
             <div class="row">
+
+                <div id="LoadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
+                    <div role="document" class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header"><strong id="exampleModalLabel" class="modal-title">View All Loads</strong>
+                          <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Set your path to view your package details.</p>
+                            <form name = "submitting-form">
+                              
+                   
+                   <div class="form-group">
+                     <label class="form-control-label" for= "outputpath">Output Path</label>
+                     <input type="text" id= "loadoutputpath" placeholder="Path where your package details will be generated" class="form-control">
+                   </div>
+                      </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                          <button type="button"  id = "loadstatus" class="btn btn-primary">Create</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                  <!--Modal starts  -->
-                               <div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
+                               <div id="statusModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
                                  <div role="document" class="modal-dialog">
                                    <div class="modal-content">
                                      <div class="modal-header"><strong id="exampleModalLabel" class="modal-title">Status Report</strong>
@@ -188,7 +218,7 @@ background: #555555;
 
        <script>
        $( document ).ready(function() {
-       disablingFields(["outputpath", "status"])
+       disablingFields(["outputpath", "status" , "loadstatus"])
    }); // ready func .
 
 
@@ -200,7 +230,13 @@ background: #555555;
                csrfmiddlewaretoken: '{{ csrf_token }}' ,
            },
            success: function(response) {
-            creatingPaths()
+            if ( ($("#inputpath").val()) && ($("#outputpath").val())){
+              creatingPaths()   
+            } 
+            else if (($("#loadoutputpath").val())){
+              creatingLoadPaths()
+            }
+
               console.log(response)
            },
            error: function(jqXHR, textStatus, errorThrown){
@@ -241,6 +277,32 @@ background: #555555;
    }) // ajax call ends
    }
 
+ function creatingLoadPaths(){
+       $.ajax({
+           url :  "{% url 'main:load_paths' %}",
+           type: "post",
+           data: {
+               csrfmiddlewaretoken: '{{ csrf_token }}' ,
+                "outputpath":$("#loadoutputpath").val(),
+
+           },
+           success: function(response) {
+             console.log(response)
+             if (response === "Success"){
+              swal("Status Directory!", "Status Directories has been created", "success")
+             }
+             else if (response === "Error") {
+              swal("Status Directory!", "Status Directories already exists", "error")
+             }
+         
+           var full_form = document.getElementsByName('submitting-form')[0];
+                            full_form.reset();
+        
+          },
+           error: function(jqXHR, textStatus, errorThrown){                       
+                  }
+   }) // ajax call ends
+   }
    function disablingFields(textfields){
     	for (i = 0; i < textfields.length; i++) {
    	document.getElementById(textfields[i]).disabled=true;
@@ -302,10 +364,24 @@ background: #555555;
                            document.getElementById("status").disabled = true;
            		}
             });
+            
+            $('#loadoutputpath').on('keyup',function(){
+                   var textvalue = $(this).val().trim();
+           	       if ((textvalue.length >0)) {
+                       document.getElementById("loadstatus").disabled = false;
+           		}
+           		else if ((textvalue.length  == 0)) {
+                           document.getElementById("loadstatus").disabled = true;
+           		}
+            });
+
             $("#status").click(function(){
               connecting_ftpAccount();
 });
 
+            $("#loadstatus").click(function(){
+              connecting_ftpAccount();
+});
 
        </script>
 

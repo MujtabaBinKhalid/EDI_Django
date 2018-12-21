@@ -79,21 +79,25 @@ def fetchingLatLong(id_device_load_record):
     return python_dict.get("details", "empty")
     
 def outputFile(filename,account,lat,longitude):
-    ftp_out = ftplib.FTP(account.get("ip_hostOut"),account.get("user_nameOut"), account.get("passwordOut"))
-    ftp_out.cwd(statusOutputPath)
-    stautusMessage = """ISA*00* *00* *02*SCAC *02*RBINTEST
-    *100819*1851*U*00401*100110046*0*P*:
-    GS*QM*SCAC*RBINTEST*20100819*1851*214060250*X*004010
-    ST*214*0001
-    B10*3766*9924017*SCAC
-    MS1***""" + lat + "-"+longitude+ """
-    *SE*10*0002
-    GE*2*214060250
-    IEA*1*100110046"""
-    output = io.BytesIO(str.encode(stautusMessage))
-    ftp_out.storbinary('STOR ' + filename+".edi", output)
-    print("output stored !")
-   
+    try:
+        ftp_out = ftplib.FTP(account.get("ip_hostOut"),account.get("user_nameOut"), account.get("passwordOut"))
+        ftp_out.cwd(statusOutputPath)
+        stautusMessage = """ISA*00* *00* *02*SCAC *02*RBINTEST
+        *100819*1851*U*00401*100110046*0*P*:
+        GS*QM*SCAC*RBINTEST*20100819*1851*214060250*X*004010
+        ST*214*0001
+        B10*3766*9924017*SCAC
+        MS1***""" + lat + "-"+longitude+ """
+        *SE*10*0002
+        GE*2*214060250
+        IEA*1*100110046"""
+        output = io.BytesIO(str.encode(stautusMessage))
+        ftp_out.storbinary('STOR ' + filename+".edi", output)
+        print("output stored Status!")
+    except Exception as e:   
+        print("Error !")
+    
+
 def generatingToken():
     # It is used to authenticate the user/company and returns the request status.
     url = "http://35.167.129.201:8081/oauth/token"
@@ -110,7 +114,7 @@ def generatingToken():
     return  python_dict.get("access_token", "empty")
     
 def fetchingPaths(email):
-    url = "http://localhost:3000/status/fetchingPath"    
+    url = "http://54.245.173.223:3000/status/fetchingPath"    
     data = {'email':email}
     payload = json.dumps(data)
     headers = {
