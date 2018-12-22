@@ -41,6 +41,13 @@
 		swal("Authentication", "Invalid Credentials", "error");
 		</script>
 		{% endif %}
+
+		{% if warning %}
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+		<script>
+		swal("Server Error", "Try Again", "info");
+		</script>
+		{% endif %}
 	<div class="limiter" >
 		<div class="container-login100" >
 			<div class="wrap-login100">

@@ -47,82 +47,88 @@ def viewAllLoads():
 # it is used to fetch all the companies on the reqyuest of the super admin .
 
 def countingAccounts(request):
-    url = "http://54.245.173.223:3000/account/countingCompanies"
-    payload = ""
-    headers = {
-        'cache-control': "no-cache",
-        }
-    response = requests.request("POST", url, data=payload, headers=headers)
-    python_dict =  json.loads(response.text)
-    return python_dict.get("dataCount", "empty")
+    try:
+        url = "http://54.245.173.223:3000/account/countingCompanies"
+        payload = ""
+        headers = {
+            'cache-control': "no-cache",
+            }
+        response = requests.request("POST", url, data=payload, headers=headers)
+        python_dict =  json.loads(response.text)
+        return python_dict.get("dataCount", "empty")
 
-
+    except Exception as e:
+        pass 
 def accountDetails(request):
-  
-    url = "http://54.245.173.223:3000/account/"
+    try:
+        url = "http://54.245.173.223:3000/account/"
 
-    payload = ""
-    headers = {
-        'cache-control': "no-cache",
-        }
+        payload = ""
+        headers = {
+            'cache-control': "no-cache",
+            }
 
-    response = requests.request("GET", url, data=payload, headers=headers)
-    python_dict =  json.loads(response.text)
-    return python_dict.get("data", "empty")     
-    
-
+        response = requests.request("GET", url, data=payload, headers=headers)
+        python_dict =  json.loads(response.text)
+        return python_dict.get("data", "empty")        
+    except Exception as e:
+        pass 
 def fetchingCompanies(request):
-    url = "http://35.167.129.201:8081/company/allcompanies"
+    try:
+        url = "http://35.167.129.201:8081/company/allcompanies"
 
-    payload = ""
-    headers = {
-        'Authorization': "Bearer "+request.session['token'],
-        'cache-control': "no-cache",
-        'Content-Type': "application/json",
+        payload = ""
+        headers = {
+            'Authorization': "Bearer "+request.session['token'],
+            'cache-control': "no-cache",
+            'Content-Type': "application/json",
+            
+            }
+
+        response = requests.request("GET", url, data=payload, headers=headers)
+        python_dict =  json.loads(response.text)
         
-        }
-
-    response = requests.request("GET", url, data=payload, headers=headers)
-    python_dict =  json.loads(response.text)
-    
-    if (python_dict.get("status", "empty") == "Success"):
-        return python_dict.get("details", "empty")
-		
-	
+        if (python_dict.get("status", "empty") == "Success"):
+            return python_dict.get("details", "empty")
+            
+    except Exception as e:
+        pass     
     # it is used to fetch the loads of a specfic company
 def fetchingLoads(request , companyEmail):
+    try:
+        url = "http://35.167.129.201:8081/load/companyloadnumbers"
 
-    url = "http://35.167.129.201:8081/load/companyloadnumbers"
+        data = {'company_email': companyEmail }
+        payload = json.dumps(data)
+        headers = {
+            'Content-Type': "application/json",
+            'Authorization': "Bearer "+request.session['token'],
+            'cache-control': "no-cache",
+            
+            }
 
-    data = {'company_email': companyEmail }
-    payload = json.dumps(data)
-    headers = {
-        'Content-Type': "application/json",
-        'Authorization': "Bearer "+request.session['token'],
-        'cache-control': "no-cache",
-        
-        }
+        response = requests.request("POST", url, data=payload, headers=headers)
 
-    response = requests.request("POST", url, data=payload, headers=headers)
-
-    python_dict =  json.loads(response.text)
+        python_dict =  json.loads(response.text)
 
 
-    if (python_dict.get("status", "empty") == "Success"):
-        return python_dict.get("details", "empty")
-     
-	
+        if (python_dict.get("status", "empty") == "Success"):
+            return python_dict.get("details", "empty")
+    except Exception as e:
+        pass 
 def activeConnections(request, session_name):
-    url = "http://54.245.173.223:3000/account/countingCompanies"
-    payload = ""
-    headers = {
-        'cache-control': "no-cache",
-        }
+    try:
+        url = "http://54.245.173.223:3000/account/countingCompanies"
+        payload = ""
+        headers = {
+            'cache-control': "no-cache",
+            }
 
-    response = requests.request("POST", url, data=payload, headers=headers)
-    python_dict =  json.loads(response.text)
-    request.session[session_name] = python_dict.get("dataCount", "empty")
-
+        response = requests.request("POST", url, data=payload, headers=headers)
+        python_dict =  json.loads(response.text)
+        request.session[session_name] = python_dict.get("dataCount", "empty")
+    except Exception as e:
+        pass 
     
 
 def ConnectedConnections(request, session_name,  accounts):
@@ -218,82 +224,84 @@ def company_files(request, accountDetail, folder):
         request.session[folder] = "0"
 
 def fetchingStatus(request):
-    url = "http://35.167.129.201:8081/user/me"
+    try:
+        url = "http://35.167.129.201:8081/user/me"
 
-    payload = ""
-    headers = {
-        'Authorization': "Bearer "+request.session['token'],
-        'cache-control': "no-cache",
-        
-        }
+        payload = ""
+        headers = {
+            'Authorization': "Bearer "+request.session['token'],
+            'cache-control': "no-cache",
+            
+            }
 
-    response = requests.request("GET", url, data=payload, headers=headers)
-    python_dict =  json.loads(response.text)
-    if (python_dict.get("status", "empty") == "Success"):
-        if(python_dict.get("details", "empty").get("role") == "user"):
-            request.session['name'] = python_dict.get("details", "empty").get("company_email")
-        
-        return (python_dict.get("details", "empty").get("role"))
-    else:
-        return ("INVALID CREDENTIALS")
-	
+        response = requests.request("GET", url, data=payload, headers=headers)
+        python_dict =  json.loads(response.text)
+        if (python_dict.get("status", "empty") == "Success"):
+            if(python_dict.get("details", "empty").get("role") == "user"):
+                request.session['name'] = python_dict.get("details", "empty").get("company_email")
+            
+            return (python_dict.get("details", "empty").get("role"))
+        else:
+            return ("INVALID CREDENTIALS")
+    except Exception as e:
+        pass    
 
 
 def index(request):
     # """ Index page, after login """
 
     if request.method == "GET":
-      try:   
-        request.session['role'] = fetchingStatus(request)
-    
-        if ((request.session['role'] == "company") or ((request.session['role'] == "user"))):
-           
-            response = fetchingCompanyTilesData(request)
-            if (response == "noerror"):
-                comapny_tiles_data = {
-                    "ftp_accounts": request.session["ftpAccounts"],
-                    "decrypted_files": request.session["output"],
-                    "sucessful_files": request.session["sucessful"],
-                    "unSucessful_files": request.session["notSucessful"],
-                }
-            elif(response == "error"):
-                comapny_tiles_data = {
-                    "ftp_accounts": "0",
-                    "decrypted_files": "0",
-                    "sucessful_files": "0",
-                    "unSucessful_files": "0",
-                }
-
-            return render(request, 'main/edi_indexCompany.html', {'tiles_data':  comapny_tiles_data})
-        elif(request.session['role'] == "super_admin"):
-             
-            response = fetchingUserTilesData(request)
-            dropdown_data = fetchingCompanies(request)
+        try:   
+            request.session['role'] = fetchingStatus(request)
+        
+            if ((request.session['role'] == "company") or ((request.session['role'] == "user"))):
             
-            if (response == "noerror"):
-                tiles_data = {
-                    "alive_connections": request.session["activeConnection"],
-                    "connected_connections": request.session["connectedConnection"],
-                    "decrypted_files": request.session["decryptedFiles"],
-                    "sucessful_files": request.session["sucessful_files"],
-                    "accounts_detail": accountDetails(request),
-                    "accounts_count":  countingAccounts(request)
-                  
-                   
-                }
-            elif(response == "error"):
-                tiles_data = {
-                    "alive_connections": "0",
-                    "connected_connections": "0",
-                    "decrypted_files": "0",
-                    "sucessful_files": "0",
-                    "accounts_detail": null,
-                    "accounts_count": countingAccounts(request)
-                }
+                response = fetchingCompanyTilesData(request)
+                if (response == "noerror"):
+                    comapny_tiles_data = {
+                        "ftp_accounts": request.session["ftpAccounts"],
+                        "decrypted_files": request.session["output"],
+                        "sucessful_files": request.session["sucessful"],
+                        "unSucessful_files": request.session["notSucessful"],
+                    }
+                elif(response == "error"):
+                    comapny_tiles_data = {
+                        "ftp_accounts": "0",
+                        "decrypted_files": "0",
+                        "sucessful_files": "0",
+                        "unSucessful_files": "0",
+                    }
 
-            return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data , "dropdown": dropdown_data})
-      except Exception as e:
-            return render(request, 'Login/index.html')
+                return render(request, 'main/edi_indexCompany.html', {'tiles_data':  comapny_tiles_data})
+            elif(request.session['role'] == "super_admin"):
+                
+                response = fetchingUserTilesData(request)
+                dropdown_data = fetchingCompanies(request)
+                
+                if (response == "noerror"):
+                    tiles_data = {
+                        "alive_connections": request.session["activeConnection"],
+                        "connected_connections": request.session["connectedConnection"],
+                        "decrypted_files": request.session["decryptedFiles"],
+                        "sucessful_files": request.session["sucessful_files"],
+                        "accounts_detail": accountDetails(request),
+                        "accounts_count":  countingAccounts(request)
+                    
+                    
+                    }
+                elif(response == "error"):
+                    tiles_data = {
+                        "alive_connections": "0",
+                        "connected_connections": "0",
+                        "decrypted_files": "0",
+                        "sucessful_files": "0",
+                        "accounts_detail": None,
+                        "accounts_count": countingAccounts(request)
+                    }
+
+                return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data , "dropdown": dropdown_data})
+        except Exception as e:
+                return render(request, 'Login/index.html')
    
 
 
@@ -339,7 +347,7 @@ def accountCreation(request):
                 return render(request, 'main/edi_registration_SuperUser.html', {"dropdown": dropdown_data})
 
         except Exception as e:
-            return render(request, 'Login/index.html')
+                 return render(request, 'Login/index.html', {"warning": "login credentials are not valid"})
 
 
 def activeLoads(request):
@@ -364,9 +372,9 @@ def statusReport(request):
 
 
 def generatingReport(request):
-    result = fetchingLatLong(request) 
-    output = creatingOutputFile(ftp_companyLogin, request, result.get('location_lat'),
-                                 result.get('location_long'),  str(request.POST['file_name']))
+    # result = fetchingLatLong(request) 
+    # output = creatingOutputFile(ftp_companyLogin, request, result.get('location_lat'),
+    #                              result.get('location_long'),  str(request.POST['file_name']))
 
     return HttpResponse(request.POST['device_record'])
 
@@ -396,23 +404,23 @@ def establishingConnection(request):
             return HttpResponse("ftp_companyLogin")
 
 
-def fetchingLatLong(request):
-    url = "http://35.167.129.201:8081/load/minloadinfo"
-    data = {'id_device_load_record': request.POST['device_record'] }
+# def fetchingLatLong(request):
+#     url = "http://35.167.129.201:8081/load/minloadinfo"
+#     data = {'id_device_load_record': request.POST['device_record'] }
     
-    payload = json.dumps(data)
+#     payload = json.dumps(data)
    
-    headers = {
-    'Content-Type': "application/json",
-    'Authorization': "Bearer "+request.session['token'] ,
-    }
+#     headers = {
+#     'Content-Type': "application/json",
+#     'Authorization': "Bearer "+request.session['token'] ,
+#     }
 
-    response = requests.request("POST", url, data=payload, headers=headers)
-    python_dict =  json.loads(response.text)
-    if (python_dict.get("status", "empty") == "Success"):
-        return python_dict.get("details", "empty")
-    else: 
-        return  python_dict.get("status", "empty")
+#     response = requests.request("POST", url, data=payload, headers=headers)
+#     python_dict =  json.loads(response.text)
+#     if (python_dict.get("status", "empty") == "Success"):
+#         return python_dict.get("details", "empty")
+#     else: 
+#         return  python_dict.get("status", "empty")
 
    
 
@@ -465,45 +473,55 @@ def fetchingUserTilesData(request):
 
 
 def creatingStatusPaths(request):
-    url = "http://54.245.173.223:3000/status/"
-    data = {'email':request.session['name'],
-     "input_path": request.POST['inputpath'], "output_path": request.POST['outputpath']}
-    payload = json.dumps(data)
-    headers = {
-    'Content-Type': "application/json",
-    }
+    try:
+        url = "http://54.245.173.223:3000/status/"
+        data = {'email':request.session['name'],
+        "input_path": request.POST['inputpath'], "output_path": request.POST['outputpath']}
+        payload = json.dumps(data)
+        headers = {
+        'Content-Type': "application/json",
+        }
 
-    response = requests.request("POST", url, data=payload, headers=headers)
-    python_dict =  json.loads(response.text)
-    return HttpResponse(python_dict.get("status", "empty"))
-   
+        response = requests.request("POST", url, data=payload, headers=headers)
+        python_dict =  json.loads(response.text)
+        return HttpResponse(python_dict.get("status", "empty"))
+    except Exception as e:
+        return HttpResponse("Error")
+
 def creatingLoadPaths(request):
-    url = "http://54.245.173.223:3000/load/"
-    data = {'email':request.session['name'],
-     "output_path": request.POST['outputpath']}
-    payload = json.dumps(data)
-    headers = {
-    'Content-Type': "application/json",
-    }
+    try:
+        url = "http://54.245.173.223:3000/load/"
+        data = {'email':request.session['name'],
+        "output_path": request.POST['outputpath']}
+        payload = json.dumps(data)
+        headers = {
+        'Content-Type': "application/json",
+        }
 
-    response = requests.request("POST", url, data=payload, headers=headers)
-    python_dict =  json.loads(response.text)
-    return HttpResponse(python_dict.get("status", "empty"))
+        response = requests.request("POST", url, data=payload, headers=headers)
+        python_dict =  json.loads(response.text)
+        return HttpResponse(python_dict.get("status", "empty"))
+    except Exception as e:
+        return HttpResponse("Error")     
     
 def fetchingAccountInfo(request , name):
-    url = "http://54.245.173.223:3000/account/fetchingCompany"
-    data = {'email': name }
-    payload = json.dumps(data)
+    try:
+        url = "http://54.245.173.223:3000/account/fetchingCompany"
+        data = {'email': name }
+        payload = json.dumps(data)
 
-    headers = {
-    'Content-Type': "application/json",
-    'cache-control': "no-cache",
-    }
+        headers = {
+        'Content-Type': "application/json",
+        'cache-control': "no-cache",
+        }
 
-    response = requests.request("POST", url, data=payload, headers=headers)
-    python_dict =  json.loads(response.text)
-    accountDetail = python_dict.get("data", "empty")
-    return accountDetail
+        response = requests.request("POST", url, data=payload, headers=headers)
+        python_dict =  json.loads(response.text)
+        accountDetail = python_dict.get("data", "empty")
+        return accountDetail
+    except Exception as e:
+        return HttpResponse("Error")
+    
         
 def fetchingCompanyTilesData(request):
     try:
@@ -532,18 +550,18 @@ def fetchingCompanyTilesData(request):
         return "error"
 
 
-def creatingOutputFile(ftp_companyLogin, request, lat, longitude, filename):
-    ftp_companyLogin.cwd(request.POST['file_path'])
-    stautusMessage = """ISA*00* *00* *02*SCAC *02*RBINTEST
-        *100819*1851*U*00401*100110046*0*P*:
-        GS*QM*SCAC*RBINTEST*20100819*1851*214060250*X*004010
-        ST*214*0001
-        B10*3766*9924017*SCAC
-        MS1***""" + lat + "-"+longitude+ """
-        *SE*10*0002
-        GE*2*214060250
-        IEA*1*100110046"""
-    output = io.BytesIO(str.encode(stautusMessage))
-    ftp_companyLogin.storbinary('STOR ' + filename + ".edi", output)
-    return "output stored !"
+# def creatingOutputFile(ftp_companyLogin, request, lat, longitude, filename):
+#     ftp_companyLogin.cwd(request.POST['file_path'])
+#     stautusMessage = """ISA*00* *00* *02*SCAC *02*RBINTEST
+#         *100819*1851*U*00401*100110046*0*P*:
+#         GS*QM*SCAC*RBINTEST*20100819*1851*214060250*X*004010
+#         ST*214*0001
+#         B10*3766*9924017*SCAC
+#         MS1***""" + lat + "-"+longitude+ """
+#         *SE*10*0002
+#         GE*2*214060250
+#         IEA*1*100110046"""
+#     output = io.BytesIO(str.encode(stautusMessage))
+#     ftp_companyLogin.storbinary('STOR ' + filename + ".edi", output)
+#     return "output stored !"
     
