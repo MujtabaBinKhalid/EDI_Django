@@ -255,7 +255,7 @@ def index(request):
             request.session['role'] = fetchingStatus(request)
         
             if ((request.session['role'] == "company") or ((request.session['role'] == "user"))):
-            
+                # deletingSessions (request ,["ftpAccounts","output","sucessful","notSucessful"])
                 response = fetchingCompanyTilesData(request)
                 if (response == "noerror"):
                     comapny_tiles_data = {
@@ -301,7 +301,7 @@ def index(request):
 
                 return render(request, 'main/edi_index.html', {'tiles_data':  tiles_data , "dropdown": dropdown_data})
         except Exception as e:
-                return render(request, 'Login/index.html')
+                return render(request, 'Login/index.html',{"warning": "login credentials are not valid"})
    
 
 
@@ -548,6 +548,10 @@ def fetchingCompanyTilesData(request):
         return "noerror"
     except Exception as e:
         return "error"
+
+def deletingSessions(request, sessionArray):
+    for key in sessionArray:
+        del request.session[key]
 
 
 # def creatingOutputFile(ftp_companyLogin, request, lat, longitude, filename):
